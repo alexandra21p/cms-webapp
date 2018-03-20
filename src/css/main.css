@@ -28,7 +28,7 @@ h1 {
 h3 {
   color: #D8D6D5;
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 span.colored-text {
@@ -65,4 +65,14 @@ a.get-started:hover {
   background-color: #EDBBB0;
   color:  #584b4f;
   border-color: #EDBBB0;
+}
+
+.fb-login-button {
+    border-radius: 50%;
+    background-color: #4267b2;
+    border: none;
+    color: #F7F7F7;
+    width: 70px;
+    height: 70px;
+    outline: none;
 }
