@@ -41,7 +41,6 @@ export default class Login extends React.Component {
 
     googleLoginResponse( response ) {
         console.log( this );
-
         console.log( response );
     }
 
