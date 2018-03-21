@@ -7,6 +7,7 @@
 body {
   font-family: 'Raleway', sans-serif;
   background-color: #252434;
+
   font-size: 13px;
 }
 
@@ -22,17 +23,17 @@ h1 {
   font-size: 3rem;
   text-align: right;
   font-weight: 300;
-  margin-right: 20px;
+  margin-right: 40px;
 }
 
 h3 {
-  color: #D8D6D5;
+  color: #F7F8F8;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
 span.colored-text {
-    color: #D3AAA2;
+    color: #EDBBB0;
     font-weight: 100;
 }
 
@@ -58,21 +59,11 @@ a.get-started {
   height: 45vh;
   background: -webkit-linear-gradient(right, #584b4f, #EDBBB0);
   background: -moz-linear-gradient(to right, #584b4f, #EDBBB0);
-  background: linear-gradient(to right, #584b4f, #EDBBB0); /* #c28a7d, #af7978 */
+  background: linear-gradient(to right, #584b4f, #f9aea4); /* #c28a7d, #af7978 */
 }
 
 a.get-started:hover {
-  background-color: #EDBBB0;
+  background-color: #f9aea4;
   color:  #584b4f;
   border-color: #EDBBB0;
-}
-
-.fb-login-button {
-    border-radius: 50%;
-    background-color: #4267b2;
-    border: none;
-    color: #F7F7F7;
-    width: 70px;
-    height: 70px;
-    outline: none;
 }
