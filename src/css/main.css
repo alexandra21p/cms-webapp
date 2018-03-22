@@ -32,6 +32,10 @@ h3 {
   font-weight: 600;
 }
 
+button {
+    cursor: pointer;
+}
+
 span.colored-text {
     color: #EDBBB0;
     font-weight: 100;

@@ -1,3 +1,4 @@
+/* eslint jsx-a11y/label-has-for: "off" */
 import React from "react";
 import PropTypes from "prop-types";
 import FacebookLogin from "react-facebook-login";
@@ -58,39 +59,88 @@ export default class Login extends React.Component {
                             <h4 className="login-message">
                     Please enter your details to login into your account.
                             </h4>
+
+                            { error && <h3>Something went wrong while trying to login.</h3>}
+
+                            <div className="input-container">
+                                <label
+                                    htmlFor="email"
+                                    className="login-label"
+                                >Email Address
+                                </label>
+
+                                <input
+                                    name="email"
+                                    type="text"
+                                    className="login-input"
+                                    // onChange={ onInputChange }
+                                    // onFocus={ onFocus }
+                                    // value={ value }
+                                />
+                            </div>
+
+                            <div className="input-container">
+                                <label
+                                    htmlFor="password"
+                                    className="login-label"
+                                >Password
+                                </label>
+
+                                <input
+                                    name="email"
+                                    type="password"
+                                    className="login-input"
+                                    // onChange={ onInputChange }
+                                    // onFocus={ onFocus }
+                                    // value={ value }
+                                />
+                            </div>
+
+                            <button className="login-button">
+                            login
+                            </button>
                         </div>
 
-                        { error && <h3>Something went wrong while trying to login.</h3>}
-                        <div className="social-icons-container">
-                            <h3>or login using one of your social accounts</h3>
-                            <FacebookLogin
-                                appId="899445726913963"
-                                autoLoad
-                                fields="name,email,picture"
-                                cssClass="social-login-button"
-                                textButton=""
-                                callback={ ( response ) => {
-                                    this.socialLoginResponse( response, "facebook" );
-                                } }
-                                onClick={ this.callFacebookLoginApi }
-                                onFailure={ ( response ) => {
-                                    this.socialLoginResponse( response, "facebook" );
-                                } }
-                            />
+                        <div className="social-login-container">
+                            <h3 className="alternative-login-title">or login using one of your
+                                <span className="highlighted-text"> social accounts
+                                </span>
+                            </h3>
+                            <div className="social-icons-container">
+                                <FacebookLogin
+                                    appId="899445726913963"
+                                    autoLoad
+                                    fields="name,email,picture"
+                                    cssClass="social-login-button"
+                                    textButton=""
+                                    callback={ ( response ) => {
+                                        this.socialLoginResponse( response, "facebook" );
+                                    } }
+                                    onClick={ this.callFacebookLoginApi }
+                                    onFailure={ ( response ) => {
+                                        this.socialLoginResponse( response, "facebook" );
+                                    } }
+                                />
 
-                            <GoogleLogin
-                                clientId="194832330236-ukd3dkogrp3itq90tc3mcnb0h04ku3tb.apps.googleusercontent.com"
-                                buttonText=""
-                                className="social-login-button"
-                                onSuccess={ ( response ) => {
-                                    this.socialLoginResponse( response, "google" );
-                                } }
-                                onFailure={ ( response ) => {
-                                    this.socialLoginResponse( response, "google" );
-                                } }
-                            />
+                                <GoogleLogin
+                                    clientId="194832330236-ukd3dkogrp3itq90tc3mcnb0h04ku3tb.apps.googleusercontent.com"
+                                    buttonText=""
+                                    className="google-login-button"
+                                    onSuccess={ ( response ) => {
+                                        this.socialLoginResponse( response, "google" );
+                                    } }
+                                    onFailure={ ( response ) => {
+                                        this.socialLoginResponse( response, "google" );
+                                    } }
+                                />
+                            </div>
                         </div>
                     </div>
+                    <h3 className="new-account-message">
+                    New around here? Go ahead and create an account.
+                    </h3>
+                    <button className="signup-button">sign up
+                    </button>
                 </div>
             </div>
         );

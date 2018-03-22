@@ -1,3 +1,134 @@
+.login-page {
+    background-color: #f9aea4;
+    height: 100vh;
+    font-family: "Raleway", sans-serif;
+}
+
+.login-container {
+    max-width: 70%;
+    height: 60vh;
+    position: absolute;
+    top: 15%;
+    /*bottom: 0;*/
+    left: 0;
+    right: 0;
+    margin: auto;
+    /*display: flex;
+    flex-direction: column;*/
+    justify-content: center;
+}
+
+.login-title {
+    text-align: center;
+    font-weight: 100;
+    margin: 50px 0 80px;
+    font-size: 3.8rem;
+}
+
+.main-container {
+    display: flex;
+}
+
+.login-form-container {
+    border-right: 2px solid #584b4f;
+    flex: 1;
+    padding: 0 60px 0 0;
+}
+
+.login-message {
+    font-size: 0.9rem;
+    margin-bottom: 50px;
+}
+
+.input-container {
+    padding: 10px 0;
+    margin: 10px 10px 20px 0;
+    position: relative;
+}
+
+.login-label {
+    position: absolute;
+    top: 1%;
+    color: #584b4f;
+}
+
+.login-input {
+    width: 100%;
+    padding: 10px 1px;
+    font-size: 0.9rem;
+    font-weight: 200;
+    background: inherit;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+    font-family: "Raleway", sans-serif;
+}
+
+.login-input:focus {
+    padding: 20px 0;
+    animation: expand-input 0.5s;
+}
+
+
+@keyframes expand-input {
+  0%   { padding-bottom: 10px; }
+  100% { padding-bottom: 20px; }
+}
+
+.login-button {
+    background-color: #252434;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 13px 35px;
+    font-size: 0.7rem;
+    font-weight: 200;
+    color: #F7F8F8;
+    outline: none;
+    border: 1px solid #252434;
+    transition: background-color 0.2s linear;
+    font-family: "Raleway", sans-serif;
+    margin-top: 25px;
+}
+
+.login-button:hover {
+    background-color: #F7F8F8;
+    color: #252434;
+    border: 1px solid #252434;
+    outline: none;
+}
+
+.social-login-container {
+    padding-left: 50px;
+    flex: 1;
+}
+
+.highlighted-text {
+    color: #226654;
+    font-weight: 700;
+}
+.social-icons-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;;
+}
+
+.social-login-button,
+.google-login-button {
+    border-radius: 50%;
+    background-color: #4267b2;
+    background: url(../assets/facebook.png) center/100% 100% no-repeat;
+    border: none;
+    color: #F7F8F8;
+    width: 90px;
+    height: 90px;
+    outline: none;
+    margin: 0 10px 0;
+}
+
+.google-login-button {
+    background: url(../assets/google.png) center/100% 100% no-repeat;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,6 +138,7 @@
 body {
   font-family: 'Raleway', sans-serif;
   background-color: #252434;
+
   font-size: 13px;
 }
 
@@ -22,17 +154,21 @@ h1 {
   font-size: 3rem;
   text-align: right;
   font-weight: 300;
-  margin-right: 20px;
+  margin-right: 40px;
 }
 
 h3 {
-  color: #D8D6D5;
+  color: #F7F8F8;
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 600;
+}
+
+button {
+    cursor: pointer;
 }
 
 span.colored-text {
-    color: #D3AAA2;
+    color: #EDBBB0;
     font-weight: 100;
 }
 
@@ -58,11 +194,11 @@ a.get-started {
   height: 45vh;
   background: -webkit-linear-gradient(right, #584b4f, #EDBBB0);
   background: -moz-linear-gradient(to right, #584b4f, #EDBBB0);
-  background: linear-gradient(to right, #584b4f, #EDBBB0); /* #c28a7d, #af7978 */
+  background: linear-gradient(to right, #584b4f, #f9aea4); /* #c28a7d, #af7978 */
 }
 
 a.get-started:hover {
-  background-color: #EDBBB0;
+  background-color: #f9aea4;
   color:  #584b4f;
   border-color: #EDBBB0;
 }
