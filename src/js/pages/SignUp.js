@@ -7,25 +7,29 @@ import "../../css/login.css";
 import FormInput from "../components/FormInput";
 import { apiPost } from "../utils/Api";
 
-export default class Login extends React.Component {
+export default class SignUp extends React.Component {
     constructor() {
         super();
         this.state = {
             email: "",
+            name: "",
             password: "",
+            retypePassword: "",
             errors: {
                 email: false,
+                name: false,
                 password: false,
+                retypePassword: false,
+                differentPasswords: false,
             },
             responseError: false,
-
         };
 
         this.socialLoginResponse = this.socialLoginResponse.bind( this );
         this.callSocialLoginApi = this.callSocialLoginApi.bind( this );
         this.handleInputChange = this.handleInputChange.bind( this );
         this.handleInputFocus = this.handleInputFocus.bind( this );
-        this.handleLogin = this.handleLogin.bind( this );
+        this.handleRegister = this.handleRegister.bind( this );
 
         this.accessToken = "";
     }
@@ -36,13 +40,8 @@ export default class Login extends React.Component {
             { access_token: this.accessToken },
         )
             .then( payload => {
-                const { token, user: { providers } } = payload;
-                const { email } = providers.find( provider => provider.type === providerType );
+                const { token } = payload;
                 localStorage.setItem( "auth", token );
-                localStorage.setItem(
-                    "userDetails",
-                    JSON.stringify( { email, provider: providerType } ),
-                );
                 this.props.history.replace( "/dashboard" );
             } )
             .catch( ( error ) => {
@@ -52,7 +51,11 @@ export default class Login extends React.Component {
     }
 
     handleInputChange( evt ) {
-        const { name, value } = evt.target;
+        let { name } = evt.target;
+        const { value } = evt.target;
+        if ( name === "retyped Password" ) {
+            name = "retypePassword";
+        }
         this.setState( {
             [ name ]: value,
         } );
@@ -63,35 +66,46 @@ export default class Login extends React.Component {
             errors: {
                 email: false,
                 password: false,
+                retypePassword: false,
+                name: false,
             },
         } );
     }
 
-    handleLogin() {
-        const { email, password } = this.state;
+    handleRegister() { // eslint-disable-line
+        const {
+            email, password, retypePassword, name,
+        } = this.state;
         const invalidEmail = email === "";
         const invalidPassword = password === "";
-        if ( invalidPassword || invalidEmail ) {
+        const invalidName = name === "";
+        const invalidRetypePassword = retypePassword === "";
+        const differentPasswordsError = retypePassword !== password;
+
+        if ( invalidPassword || invalidEmail || invalidName ||
+            invalidRetypePassword || differentPasswordsError ) {
             this.setState( {
                 errors: {
                     email: invalidEmail,
                     password: invalidPassword,
+                    retypePassword: invalidRetypePassword,
+                    name: invalidName,
+                    differentPasswords: differentPasswordsError,
                 },
+                responseError: differentPasswordsError,
             } );
+            setTimeout( () => this.setState( { responseError: false } ), 5000 );
+            return;
         }
 
         apiPost(
-            "/api/users/login",
-            { email, password, provider: "local" },
+            "/api/users/registration",
+            {
+                email, password, displayName: name, provider: "local",
+            },
         )
-            .then( payload => {
-                const { token } = payload;
-                localStorage.setItem( "auth", token );
-                localStorage.setItem(
-                    "userDetails",
-                    JSON.stringify( { email, provider: "local" } ),
-                );
-                this.props.history.replace( "/dashboard" );
+            .then( () => {
+                this.setState( { isRegisterSuccessful: true } );
             } )
             .catch( ( error ) => {
                 console.log( error );
@@ -102,7 +116,7 @@ export default class Login extends React.Component {
     socialLoginResponse( response, providerType ) {
         const { accessToken } = response;
         this.accessToken = accessToken;
-
+        console.log( response );
         if ( !accessToken || accessToken === "" ) {
             this.setState( { responseError: true } );
             return;
@@ -114,26 +128,59 @@ export default class Login extends React.Component {
 
     render() {
         const {
-            errors, email, password, responseError,
+            errors, email, password, retypePassword, name, responseError,
+            isRegisterSuccessful,
         } = this.state;
-        const { email: invalidEmail, password: invalidPassword } = errors;
+        const {
+            email: invalidEmail, password: invalidPassword, retypePassword: invalidRetypePassword,
+            name: invalidName, differentPasswords,
+        } = errors;
+
+        const errorType = differentPasswords ? "Passwords do not match." :
+            "Something went wrong. Please try again.";
 
         return (
             <div className="login-page">
-                <div className="login-container">
-                    <h1 className="login-title">Welcome back</h1>
+                <div className="register-container">
+                    {
+                        isRegisterSuccessful ?
+                            <div className="redirect-container">
 
-                    <div className="main-container">
+                                <h1 className="redirect-message">
+                            Great! Now you can login into your new account
+                                </h1>
+                                <button
+                                    className="signup-button"
+                                    onClick={ () => this.props.history.replace( "/login" ) }
+                                >go to login page
+                                </button>
+                            </div>
+                            :
+                            <h1 className="register-title">Let&apos;s be friends</h1>
+                    }
+
+                    <div className="register-main-container">
                         <div className="login-form-container">
                             {
                                 responseError ?
                                     <h5 className="login-error">
-                            Invalid username or password.
+                                        {errorType}
                                     </h5> :
                                     <h4 className="login-message">
-                    Please enter your details to login into your account.
+                    Please enter your details to create an account.
                                     </h4>
                             }
+
+                            <FormInput
+                                inputName="name"
+                                labelText="What's your name?"
+                                onInputChange={ ( evt ) => this.handleInputChange( evt ) }
+                                onFocus={ this.handleInputFocus }
+                                isContentHidden={ false }
+                                value={ name }
+                                isMissing={ invalidName }
+                            />
+
                             <FormInput
                                 inputName="email"
                                 labelText="Email Address"
@@ -154,13 +201,23 @@ export default class Login extends React.Component {
                                 isMissing={ invalidPassword }
                             />
 
-                            <button className="login-button" onClick={ this.handleLogin }>
-                            login
+                            <FormInput
+                                inputName="retyped Password"
+                                labelText="Your password again"
+                                onInputChange={ ( evt ) => this.handleInputChange( evt ) }
+                                onFocus={ this.handleInputFocus }
+                                isContentHidden
+                                value={ retypePassword }
+                                isMissing={ invalidRetypePassword }
+                            />
+
+                            <button className="register-button" onClick={ this.handleRegister }>
+                            continue
                             </button>
                         </div>
 
                         <div className="social-login-container">
-                            <h3 className="alternative-login-title">or login using one of your
+                            <h3 className="alternative-login-title">or register using one of your
                                 <span className="highlighted-text"> social accounts
                                 </span>
                             </h3>
@@ -174,7 +231,7 @@ export default class Login extends React.Component {
                                     callback={ ( response ) => {
                                         this.socialLoginResponse( response, "facebook" );
                                     } }
-                                    onClick={ () => this.callSocialLoginApi( "facebook" ) }
+                                    onClick={ this.callFacebookLoginApi }
                                     onFailure={ ( response ) => {
                                         this.socialLoginResponse( response, "facebook" );
                                     } }
@@ -194,16 +251,6 @@ export default class Login extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="new-account-container">
-                        <h3 className="new-account-message">
-                    New around here? Go ahead and create an account.
-                        </h3>
-                        <button
-                            className="signup-button"
-                            onClick={ () => this.props.history.replace( "/signup" ) }
-                        >sign up
-                        </button>
-                    </div>
 
                 </div>
             </div>
@@ -211,7 +258,7 @@ export default class Login extends React.Component {
     }
 }
 
-Login.propTypes = {
-    // responseError: PropTypes.bool.isRequired,
+SignUp.propTypes = {
     history: PropTypes.object.isRequired, // eslint-disable-line
+    // isRegisterSuccessful: PropTypes.bool.isRequired,
 };

@@ -4,23 +4,28 @@
   box-sizing: border-box;
 }
 
+
+html {
+  /* height: 100%; */
+  font-size: 62.5%;
+}
+
 body {
   font-family: 'Raleway', sans-serif;
   background-color: #252434;
-
-  font-size: 13px;
+  /* min-height: 100%; */
 }
 
 
 .home-container {
     width: 100%;
-    margin: 40px auto;
+    padding: 40px 0;
 }
 
 h1 {
   font-family: 'Raleway', sans-serif;
   color: #584b4f;
-  font-size: 3rem;
+  font-size: 4.3rem;
   text-align: right;
   font-weight: 300;
   margin-right: 40px;
@@ -28,7 +33,7 @@ h1 {
 
 h3 {
   color: #F7F8F8;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 600;
 }
 
@@ -49,7 +54,7 @@ a.get-started {
   padding: 15px 20px;
   text-decoration: none;
   margin: 20px 0;
-  font-size: 1rem;
+  font-size: 1.4rem;
   width: 15%;
   text-align: center;
   transition: background-color linear 0.2s;
@@ -57,7 +62,7 @@ a.get-started {
 }
 
 .separator {
-  margin: 40px 0;
+  margin: 30px 0;
   padding: 50px 0 50px 100px;
   background: #584b4f;
   height: 45vh;

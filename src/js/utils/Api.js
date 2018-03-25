@@ -13,7 +13,7 @@ function apiPost( url, data ) {
         .then( ( response ) => response.json( ) )
         .then( ( res ) => {
             if ( !res.success ) {
-                throw new Error( res.message );
+                throw new Error( res.error );
             }
             return res.payload;
         } );
