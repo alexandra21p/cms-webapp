@@ -1,0 +1,65 @@
+.profile-page {
+    height: 100vh;
+    font-family: "Raleway", sans-serif;
+}
+
+header.profile-header {
+    height: 8vh;
+    box-shadow: 0 1px 5px 0 rgba(41,85,115,.21);
+}
+
+aside.sidebar {
+    width: 15%;
+    flex: 1;
+    background-color: #f9aea4;
+}
+
+.avatar {
+    max-width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.profile-container {
+    display: flex;
+    height: 92vh;
+}
+
+main.profile-main-container {
+    flex: 4;
+    display: flex;
+    justify-content: space-around;
+}
+
+.empty-container {
+    padding: 30px 50px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.no-websites-message {
+    color: #f9aea4;
+    font-size: 3rem;
+    font-weight: 100;
+}
+
+.profile-button {
+    background-color: inherit;
+    border: 1px solid #f9aea4;
+    color: #f9aea4;
+    padding: 20px;
+    margin: 30px auto;
+    font-family: "Raleway", sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.6px;
+    outline: none;
+    transition: background-color 0.3s linear;
+}
+
+.profile-button:hover {
+    background-color: #f9aea4;
+    border: 1px solid #f9aea4;
+    color: #252434;
+}

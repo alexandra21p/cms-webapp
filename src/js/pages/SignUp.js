@@ -5,7 +5,6 @@ import FacebookLogin from "react-facebook-login";
 import GoogleLogin from "react-google-login";
 import "../../css/login.css";
 import FormInput from "../components/FormInput";
-import { apiPost } from "../utils/Api";
 
 export default class SignUp extends React.Component {
     constructor() {
@@ -15,14 +14,13 @@ export default class SignUp extends React.Component {
             name: "",
             password: "",
             retypePassword: "",
-            errors: {
+            validationErrors: {
                 email: false,
                 name: false,
                 password: false,
                 retypePassword: false,
-                differentPasswords: false,
             },
-            responseError: false,
+            clickedFacebookLogin: false,
         };
 
         this.socialLoginResponse = this.socialLoginResponse.bind( this );
@@ -30,24 +28,15 @@ export default class SignUp extends React.Component {
         this.handleInputChange = this.handleInputChange.bind( this );
         this.handleInputFocus = this.handleInputFocus.bind( this );
         this.handleRegister = this.handleRegister.bind( this );
+        this.handleFacebookClick = this.handleFacebookClick.bind( this );
 
         this.accessToken = "";
     }
 
     callSocialLoginApi( providerType ) {
-        apiPost(
-            `/api/users/auth/${ providerType }`,
-            { access_token: this.accessToken },
-        )
-            .then( payload => {
-                const { token } = payload;
-                localStorage.setItem( "auth", token );
-                this.props.history.replace( "/dashboard" );
-            } )
-            .catch( ( error ) => {
-                console.log( error );
-                this.setState( { responseError: true } );
-            } );
+        const { handleSocialLogin } = this.props.options;
+
+        handleSocialLogin( providerType, this.accessToken );
     }
 
     handleInputChange( evt ) {
@@ -63,7 +52,7 @@ export default class SignUp extends React.Component {
 
     handleInputFocus() {
         this.setState( {
-            errors: {
+            validationErrors: {
                 email: false,
                 password: false,
                 retypePassword: false,
@@ -72,7 +61,7 @@ export default class SignUp extends React.Component {
         } );
     }
 
-    handleRegister() { // eslint-disable-line
+    handleRegister() {
         const {
             email, password, retypePassword, name,
         } = this.state;
@@ -80,78 +69,70 @@ export default class SignUp extends React.Component {
         const invalidPassword = password === "";
         const invalidName = name === "";
         const invalidRetypePassword = retypePassword === "";
-        const differentPasswordsError = retypePassword !== password;
 
         if ( invalidPassword || invalidEmail || invalidName ||
-            invalidRetypePassword || differentPasswordsError ) {
+            invalidRetypePassword ) {
             this.setState( {
-                errors: {
+                validationErrors: {
                     email: invalidEmail,
                     password: invalidPassword,
                     retypePassword: invalidRetypePassword,
                     name: invalidName,
-                    differentPasswords: differentPasswordsError,
                 },
-                responseError: differentPasswordsError,
             } );
-            setTimeout( () => this.setState( { responseError: false } ), 5000 );
             return;
         }
 
-        apiPost(
-            "/api/users/registration",
-            {
-                email, password, displayName: name, provider: "local",
-            },
-        )
-            .then( () => {
-                this.setState( { isRegisterSuccessful: true } );
-            } )
-            .catch( ( error ) => {
-                console.log( error );
-                this.setState( { responseError: true } );
-            } );
+        const { handleLocalRegister } = this.props.options;
+        handleLocalRegister( email, password, retypePassword, name, "local" );
     }
 
     socialLoginResponse( response, providerType ) {
         const { accessToken } = response;
+        const { clickedFacebookLogin } = this.state;
+
         this.accessToken = accessToken;
-        console.log( response );
-        if ( !accessToken || accessToken === "" ) {
-            this.setState( { responseError: true } );
+        const facebookCheck = !!( providerType === "facebook" && !clickedFacebookLogin );
+
+        if ( !accessToken || accessToken === "" || facebookCheck ) {
             return;
         }
-        if ( providerType === "google" ) {
-            this.callSocialLoginApi( providerType );
+        this.callSocialLoginApi( providerType );
+    }
+
+    handleFacebookClick() {
+        this.setState( { clickedFacebookLogin: true } );
+        if ( this.accessToken ) {
+            this.callSocialLoginApi( "facebook" );
         }
     }
 
     render() {
         const {
-            errors, email, password, retypePassword, name, responseError,
-            isRegisterSuccessful,
+            validationErrors, email, password, retypePassword, name,
         } = this.state;
         const {
             email: invalidEmail, password: invalidPassword, retypePassword: invalidRetypePassword,
-            name: invalidName, differentPasswords,
-        } = errors;
-
-        const errorType = differentPasswords ? "Passwords do not match." :
-            "Something went wrong. Please try again.";
+            name: invalidName,
+        } = validationErrors;
+        const { showSuccessfulRegister, error, hideRedirectMessage } = this.props.options;
 
         return (
             <div className="login-page">
                 <div className="register-container">
                     {
-                        isRegisterSuccessful ?
+                        showSuccessfulRegister ?
                             <div className="redirect-container">
 
                                 <h1 className="redirect-message">
-                            Great! Now you can login into your new account
+                            Great! Now you can login into your new account.
                                 </h1>
                                 <button
                                     className="signup-button"
-                                    onClick={ () => this.props.history.replace( "/login" ) }
+                                    onClick={ () => {
+                                        hideRedirectMessage();
+                                        this.props.history.replace( "/login" );
+                                    } }
                                 >go to login page
                                 </button>
                             </div>
@@ -162,9 +143,9 @@ export default class SignUp extends React.Component {
                     <div className="register-main-container">
                         <div className="login-form-container">
                             {
-                                responseError ?
+                                error.status ?
                                     <h5 className="login-error">
-                                        {errorType}
+                                        {error.message}
                                     </h5> :
                                     <h4 className="login-message">
                     Please enter your details to create an account.
@@ -231,7 +212,7 @@ export default class SignUp extends React.Component {
                                     callback={ ( response ) => {
                                         this.socialLoginResponse( response, "facebook" );
                                     } }
-                                    onClick={ this.callFacebookLoginApi }
+                                    onClick={ this.handleFacebookClick }
                                     onFailure={ ( response ) => {
                                         this.socialLoginResponse( response, "facebook" );
                                     } }
@@ -259,6 +240,15 @@ export default class SignUp extends React.Component {
 }
 
 SignUp.propTypes = {
+    options: PropTypes.shape( {
+        error: PropTypes.shape( {
+            status: PropTypes.bool.isRequired,
+            message: PropTypes.string.isRequired,
+        } ).isRequired,
+        showSuccessfulRegister: PropTypes.bool.isRequired,
+        handleLocalRegister: PropTypes.func.isRequired,
+        handleSocialLogin: PropTypes.func.isRequired,
+        hideRedirectMessage: PropTypes.func.isRequired,
+    } ).isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
-    // isRegisterSuccessful: PropTypes.bool.isRequired,
 };

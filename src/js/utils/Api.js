@@ -10,10 +10,14 @@ function apiPost( url, data ) {
         headers,
         body: JSON.stringify( data ),
     } )
-        .then( ( response ) => response.json( ) )
+        .then( ( response ) => {
+            if ( response.status === 200 ) {
+                return response.json();
+            } return ( response.status );
+        } )
         .then( ( res ) => {
             if ( !res.success ) {
-                throw new Error( res.error );
+                throw new Error( res );
             }
             return res.payload;
         } );

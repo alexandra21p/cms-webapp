@@ -5,7 +5,6 @@ import FacebookLogin from "react-facebook-login";
 import GoogleLogin from "react-google-login";
 import "../../css/login.css";
 import FormInput from "../components/FormInput";
-import { apiPost } from "../utils/Api";
 
 export default class Login extends React.Component {
     constructor() {
@@ -13,11 +12,11 @@ export default class Login extends React.Component {
         this.state = {
             email: "",
             password: "",
-            errors: {
+            validationErrors: {
                 email: false,
                 password: false,
             },
-            responseError: false,
+            clickedFacebookLogin: false,
 
         };
 
@@ -25,30 +24,16 @@ export default class Login extends React.Component {
         this.callSocialLoginApi = this.callSocialLoginApi.bind( this );
         this.handleInputChange = this.handleInputChange.bind( this );
         this.handleInputFocus = this.handleInputFocus.bind( this );
+        this.handleFacebookClick = this.handleFacebookClick.bind( this );
         this.handleLogin = this.handleLogin.bind( this );
 
         this.accessToken = "";
     }
 
     callSocialLoginApi( providerType ) {
-        apiPost(
-            `/api/users/auth/${ providerType }`,
-            { access_token: this.accessToken },
-        )
-            .then( payload => {
-                const { token, user: { providers } } = payload;
-                const { email } = providers.find( provider => provider.type === providerType );
-                localStorage.setItem( "auth", token );
-                localStorage.setItem(
-                    "userDetails",
-                    JSON.stringify( { email, provider: providerType } ),
-                );
-                this.props.history.replace( "/dashboard" );
-            } )
-            .catch( ( error ) => {
-                console.log( error );
-                this.setState( { responseError: true } );
-            } );
+        const { handleSocialLogin } = this.props.options;
+
+        handleSocialLogin( providerType, this.accessToken );
     }
 
     handleInputChange( evt ) {
@@ -60,7 +45,7 @@ export default class Login extends React.Component {
 
     handleInputFocus() {
         this.setState( {
-            errors: {
+            validationErrors: {
                 email: false,
                 password: false,
             },
@@ -69,54 +54,48 @@ export default class Login extends React.Component {
 
     handleLogin() {
         const { email, password } = this.state;
+        const { handleLocalLogin } = this.props.options;
         const invalidEmail = email === "";
         const invalidPassword = password === "";
         if ( invalidPassword || invalidEmail ) {
             this.setState( {
-                errors: {
+                validationErrors: {
                     email: invalidEmail,
                     password: invalidPassword,
                 },
             } );
+            return;
         }
 
-        apiPost(
-            "/api/users/login",
-            { email, password, provider: "local" },
-        )
-            .then( payload => {
-                const { token } = payload;
-                localStorage.setItem( "auth", token );
-                localStorage.setItem(
-                    "userDetails",
-                    JSON.stringify( { email, provider: "local" } ),
-                );
-                this.props.history.replace( "/dashboard" );
-            } )
-            .catch( ( error ) => {
-                console.log( error );
-                this.setState( { responseError: true } );
-            } );
+        handleLocalLogin( email, password, "local" );
     }
 
     socialLoginResponse( response, providerType ) {
         const { accessToken } = response;
-        this.accessToken = accessToken;
+        const { clickedFacebookLogin } = this.state;
 
-        if ( !accessToken || accessToken === "" ) {
-            this.setState( { responseError: true } );
+        this.accessToken = accessToken;
+        const facebookCheck = !!( providerType === "facebook" && !clickedFacebookLogin );
+
+        if ( !accessToken || accessToken === "" || facebookCheck ) {
             return;
         }
-        if ( providerType === "google" ) {
-            this.callSocialLoginApi( providerType );
+        this.callSocialLoginApi( providerType );
+    }
+
+    handleFacebookClick() {
+        this.setState( { clickedFacebookLogin: true } );
+        if ( this.accessToken ) {
+            this.callSocialLoginApi( "facebook" );
         }
     }
 
     render() {
         const {
-            errors, email, password, responseError,
+            validationErrors, email, password,
         } = this.state;
-        const { email: invalidEmail, password: invalidPassword } = errors;
+        const { email: invalidEmail, password: invalidPassword } = validationErrors;
+        const { error } = this.props.options;
 
         return (
             <div className="login-page">
@@ -126,9 +105,9 @@ export default class Login extends React.Component {
                     <div className="main-container">
                         <div className="login-form-container">
                             {
-                                responseError ?
+                                error.status ?
                                     <h5 className="login-error">
-                            Invalid username or password.
+                                        {error.message}
                                     </h5> :
                                     <h4 className="login-message">
                     Please enter your details to login into your account.
@@ -174,7 +153,7 @@ export default class Login extends React.Component {
                                     callback={ ( response ) => {
                                         this.socialLoginResponse( response, "facebook" );
                                     } }
-                                    onClick={ () => this.callSocialLoginApi( "facebook" ) }
+                                    onClick={ this.handleFacebookClick }
                                     onFailure={ ( response ) => {
                                         this.socialLoginResponse( response, "facebook" );
                                     } }
@@ -212,6 +191,13 @@ export default class Login extends React.Component {
 }
 
 Login.propTypes = {
-    // responseError: PropTypes.bool.isRequired,
+    options: PropTypes.shape( {
+        error: PropTypes.shape( {
+            status: PropTypes.bool.isRequired,
+            message: PropTypes.string.isRequired,
+        } ).isRequired,
+        handleLocalLogin: PropTypes.func.isRequired,
+        handleSocialLogin: PropTypes.func.isRequired,
+    } ).isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
