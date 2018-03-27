@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { decryptToken } from "../utils/helperMethods";
 import "../../css/profile.css";
 
@@ -37,7 +38,12 @@ export default class Profile extends React.Component {
                 <h2 className="no-websites-message">
                 You haven&apos;t created any websites yet. Let&apos;s change that.
                 </h2>
-                <button className="profile-button">Create a new site</button>
+                <Link
+                    className="profile-navigation-button"
+                    to="/designer"
+                >
+                Create a new site
+                </Link>
             </div>
         );
     }

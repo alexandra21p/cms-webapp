@@ -4,8 +4,8 @@
 }
 
 header.profile-header {
-    height: 8vh;
-    border: 1px solid #584b4f;
+    height: 10vh;
+    border-bottom: 1px solid #584b4f;
     box-shadow: 0 1px 5px 0 rgba(249, 174, 164, .25);
     display: flex;
     align-items: center;
@@ -13,11 +13,11 @@ header.profile-header {
 }
 
 button.logout-button {
-    background-color: #f9aea4;
+    background-color: #fb9a88;
     border: 1px solid #252434;
     color: #252434;
-    padding: 10px 15px;
-    font-size: 1.5rem;
+    padding: 8px 13px;
+    font-size: 1.4rem;
     margin-right: 30px;
     text-transform: capitalize;
     transition: background-color 0.3s linear;
@@ -26,8 +26,8 @@ button.logout-button {
 
 button.logout-button:hover {
     background-color: #252434;
-    border: 1px solid #f9aea4;
-    color: #f9aea4;
+    border: 1px solid #fb9a88;
+    color: #fb9a88;
 }
 
 .profile-welcome-message {
@@ -38,7 +38,7 @@ button.logout-button:hover {
 aside.sidebar {
     width: 15%;
     flex: 1;
-    background-color: #f9aea4;
+    background-color: #fb9a88;
 }
 
 .avatar {
@@ -51,7 +51,7 @@ aside.sidebar {
 
 .profile-container {
     display: flex;
-    height: 92vh;
+    height: 90vh;
 }
 
 main.profile-main-container {
@@ -69,28 +69,30 @@ main.profile-main-container {
 }
 
 .no-websites-message {
-    color: #f9aea4;
+    color: #fb9a88;
     font-size: 3rem;
     font-weight: 100;
     text-align: center;
     line-height: 40px;
 }
 
-.profile-button {
+.profile-navigation-button {
     background-color: inherit;
-    border: 1px solid #f9aea4;
-    color: #f9aea4;
-    padding: 20px;
+    border: 1px solid #fb9a88;
+    color: #fb9a88;
+    padding: 15px;
     margin: 30px auto;
     font-family: "Raleway", sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     letter-spacing: 0.6px;
     transition: background-color 0.3s linear;
     border-radius: 3px;
+    text-decoration: none;
+    display: block;
 }
 
-.profile-button:hover {
-    background-color: #f9aea4;
-    border: 1px solid #f9aea4;
+.profile-navigation-button:hover {
+    background-color: #fb9a88;
+    border: 1px solid #fb9a88;
     color: #252434;
 }

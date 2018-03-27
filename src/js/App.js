@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import Designer from "./pages/Designer";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Settings from "./pages/Settings";
 import PrivateRoute from "./components/PrivateRoute";
 import { apiPost, apiGet } from "./utils/Api";
 import { errors } from "./utils/errors";
@@ -231,6 +232,7 @@ class App extends React.Component {
                         /> ) ) }
                 />
                 <PrivateRoute path="/profile" component={ Profile } options={ options } />
+                <PrivateRoute path="/settings" component={ Settings } options={ options } />
                 <PrivateRoute path="/designer" component={ Designer } options={ options } />
             </Switch>
         );

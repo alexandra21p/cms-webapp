@@ -1,5 +1,7 @@
 .login-page {
-    background-color: #f9aea4;
+    /* background-color: #fb9a88; */
+    /* original was: #f9aea4 */
+    background-color: #fb9a88;
     height: 100vh;
     font-family: "Raleway", sans-serif;
 }
@@ -31,7 +33,7 @@
     border-right: 2px solid;
     border-top: 0;
     border-bottom: 0;
-    border-image: linear-gradient(to bottom, #f9aea4 0%, #18483b 48%, #f9aea4 100%);
+    border-image: linear-gradient(to bottom, #fb9a88 0%, #18483b 48%, #fb9a88 100%);
     border-image-slice: 1;
     flex: 1;
     display: flex;
