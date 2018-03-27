@@ -5,7 +5,34 @@
 
 header.profile-header {
     height: 8vh;
-    box-shadow: 0 1px 5px 0 rgba(41,85,115,.21);
+    border: 1px solid #584b4f;
+    box-shadow: 0 1px 5px 0 rgba(249, 174, 164, .25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+button.logout-button {
+    background-color: #f9aea4;
+    border: 1px solid #252434;
+    color: #252434;
+    padding: 10px 15px;
+    font-size: 1.5rem;
+    margin-right: 30px;
+    text-transform: capitalize;
+    transition: background-color 0.3s linear;
+    border-radius: 3px;
+}
+
+button.logout-button:hover {
+    background-color: #252434;
+    border: 1px solid #f9aea4;
+    color: #f9aea4;
+}
+
+.profile-welcome-message {
+    margin-left: 30px;
+    font-weight: 400;
 }
 
 aside.sidebar {
@@ -17,6 +44,8 @@ aside.sidebar {
 .avatar {
     max-width: 100px;
     height: 100px;
+    margin: 40px auto 10px;
+    display: block;
     border-radius: 50%;
 }
 
@@ -43,6 +72,8 @@ main.profile-main-container {
     color: #f9aea4;
     font-size: 3rem;
     font-weight: 100;
+    text-align: center;
+    line-height: 40px;
 }
 
 .profile-button {
@@ -54,8 +85,8 @@ main.profile-main-container {
     font-family: "Raleway", sans-serif;
     font-size: 1.8rem;
     letter-spacing: 0.6px;
-    outline: none;
     transition: background-color 0.3s linear;
+    border-radius: 3px;
 }
 
 .profile-button:hover {

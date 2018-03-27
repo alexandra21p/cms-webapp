@@ -39,6 +39,8 @@ h3 {
 
 button {
     cursor: pointer;
+    outline: none;
+    font-family: "Raleway", sans-serif;
 }
 
 span.colored-text {
@@ -58,6 +60,7 @@ a.get-started {
   width: 15%;
   text-align: center;
   transition: background-color linear 0.2s;
+  border-radius: 1px;
   /* text-transform: uppercase; */
 }
 

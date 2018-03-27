@@ -23,10 +23,12 @@ function apiPost( url, data ) {
         } );
 }
 
-function apiGet( url ) {
+function apiGet( url, header = {} ) {
+    const reqHeaders = Object.assign( {}, headers, header );
+
     return fetch( url, {
         method: "GET",
-        headers,
+        headers: reqHeaders,
     } )
         .then( response => {
             if ( response.status === 200 ) {

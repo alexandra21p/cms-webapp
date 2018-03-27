@@ -14,12 +14,11 @@ app.use( bodyParser.json( ) );
 
 app.use( "/api", ( req, res ) => {
     const { url: reqUrl, method } = req;
-    const url = `http://localhost:8055${ reqUrl }`;
+    const url = `http://localhost:3030${ reqUrl }`;
 
     const requestOptions = {
         url,
         headers: {
-            // Authorization: "Bearer ZmEzNjljYjFlOTZiOThkYWU1MDcyNmIy",
         },
         method,
     };

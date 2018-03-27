@@ -8,7 +8,7 @@ import Designer from "./pages/Designer";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import PrivateRoute from "./components/PrivateRoute";
-import { apiPost } from "./utils/Api";
+import { apiPost, apiGet } from "./utils/Api";
 import { errors } from "./utils/errors";
 import { getError, encryptToken } from "./utils/helperMethods";
 
@@ -22,6 +22,7 @@ class App extends React.Component {
                 status: false,
                 message: "",
             },
+            user: {},
             showSuccessfulRegister: false,
         };
 
@@ -29,14 +30,45 @@ class App extends React.Component {
         this.handleSocialLogin = this.handleSocialLogin.bind( this );
         this.handleLocalRegister = this.handleLocalRegister.bind( this );
         this.hideRedirectMessage = this.hideRedirectMessage.bind( this );
+        this.getUserProfile = this.getUserProfile.bind( this );
     }
 
     componentWillMount() {
-        if ( localStorage.getItem( "auth" ) ) {
-            this.setState( { isAuthenticated: true } );
-        } else {
+        const authToken = localStorage.getItem( "auth" );
+        const user = JSON.parse( localStorage.getItem( "userDetails" ) );
+
+        if ( !authToken && !user ) {
             this.setState( { isAuthenticated: false } );
+            return;
         }
+        const { provider } = user;
+        if ( provider === "local" ) {
+            this.setState( { isAuthenticated: true } );
+            return;
+        }
+
+        // const loginStatus = checkProviderLoginStatus( provider );
+        // if ( !loginStatus ) {
+        //     localStorage.removeItem( "auth" );
+        //     localStorage.removeItem( "userDetails" );
+        //     this.setState( { isAuthenticated: false } );
+        //     return;
+        // }
+        this.setState( { isAuthenticated: true } );
+    }
+
+    getUserProfile( authToken, userId ) {
+        console.log( authToken, userId, this );
+        apiGet(
+            `/api/users/getProfile/${ userId }`,
+            { "x-access-token": authToken },
+        )
+            .then( ( { payload } ) => {
+                this.setState( { user: payload } );
+            } )
+            .catch( ( error ) => {
+                console.log( error );
+            } );
     }
 
     handleLocalLogin( email, password, provider ) {
@@ -52,7 +84,7 @@ class App extends React.Component {
                 localStorage.setItem( "auth", encryptedToken );
                 localStorage.setItem(
                     "userDetails",
-                    JSON.stringify( { email, provider: "local" } ),
+                    JSON.stringify( { id, email, provider: "local" } ),
                 );
 
                 this.setState(
@@ -123,13 +155,15 @@ class App extends React.Component {
             { access_token: accessToken },
         )
             .then( payload => {
-                const { token, user: { providers } } = payload;
+                const { token, user: { providers, id } } = payload;
                 const { email } = providers.find( prov => prov.type === provider );
+                const reversedId = id.split( "" ).reverse().join( "" );
+                const encryptedToken = encryptToken( token, id, reversedId );
 
-                localStorage.setItem( "auth", token );
+                localStorage.setItem( "auth", encryptedToken );
                 localStorage.setItem(
                     "userDetails",
-                    JSON.stringify( { email, provider } ),
+                    JSON.stringify( { id, email, provider } ),
                 );
 
                 this.setState(
@@ -161,7 +195,9 @@ class App extends React.Component {
     }
 
     render() {
-        const { isAuthenticated, error, showSuccessfulRegister } = this.state;
+        const {
+            isAuthenticated, error, showSuccessfulRegister, user,
+        } = this.state;
 
         const options = {
             isAuthenticated,
@@ -171,6 +207,8 @@ class App extends React.Component {
             handleSocialLogin: this.handleSocialLogin,
             handleLocalRegister: this.handleLocalRegister,
             hideRedirectMessage: this.hideRedirectMessage,
+            getUserProfile: this.getUserProfile,
+            user,
         };
 
         return (

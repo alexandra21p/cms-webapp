@@ -24,9 +24,24 @@ const decryptToken = ( encryptedText, key, initVector ) => {
     return decrypted;
 };
 
+const checkProviderLoginStatus = ( provider ) => {
+    if ( !window.FB ) {
+        return false;
+    }
+    let isConnected;
+    if ( provider === "facebook" ) {
+        window.FB.getLoginStatus( ( { status } ) => {
+            isConnected = status === "connected";
+        } );
+    }
+
+    return isConnected;
+};
+
 export {
     capitalize,
     getError,
     encryptToken,
     decryptToken,
+    checkProviderLoginStatus,
 };

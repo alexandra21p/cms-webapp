@@ -1,28 +1,91 @@
+.profile-page {
+    height: 100vh;
+    font-family: "Raleway", sans-serif;
+}
+
+header.profile-header {
+    height: 8vh;
+    box-shadow: 0 1px 5px 0 rgba(41,85,115,.21);
+}
+
+aside.sidebar {
+    width: 15%;
+    flex: 1;
+    background-color: #f9aea4;
+}
+
+.avatar {
+    max-width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.profile-container {
+    display: flex;
+    height: 92vh;
+}
+
+main.profile-main-container {
+    flex: 4;
+    display: flex;
+    justify-content: space-around;
+}
+
+.empty-container {
+    padding: 30px 50px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.no-websites-message {
+    color: #f9aea4;
+    font-size: 3rem;
+    font-weight: 100;
+}
+
+.profile-button {
+    background-color: inherit;
+    border: 1px solid #f9aea4;
+    color: #f9aea4;
+    padding: 20px;
+    margin: 30px auto;
+    font-family: "Raleway", sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.6px;
+    outline: none;
+    transition: background-color 0.3s linear;
+}
+
+.profile-button:hover {
+    background-color: #f9aea4;
+    border: 1px solid #f9aea4;
+    color: #252434;
+}
 .login-page {
     background-color: #f9aea4;
     height: 100vh;
     font-family: "Raleway", sans-serif;
 }
 
-.login-container {
+.login-container,
+.register-container {
     max-width: 70%;
-    height: 60vh;
-    position: absolute;
-    top: 15%;
-    /*bottom: 0;*/
-    left: 0;
-    right: 0;
+    height: 100vh;
     margin: auto;
-    /*display: flex;
-    flex-direction: column;*/
+    display: flex;
+    flex-direction: column;
+    position: relative;
     justify-content: center;
 }
 
-.login-title {
+.login-title,
+.register-title {
     text-align: center;
     font-weight: 100;
-    margin: 50px 0 80px;
-    font-size: 3.8rem;
+    margin: -100px 0 100px;
+    font-size: 5.5rem;
 }
 
 .main-container {
@@ -30,19 +93,25 @@
 }
 
 .login-form-container {
-    border-right: 2px solid #584b4f;
+    border-right: 2px solid;
+    border-top: 0;
+    border-bottom: 0;
+    border-image: linear-gradient(to bottom, #f9aea4 0%, #18483b 48%, #f9aea4 100%);
+    border-image-slice: 1;
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 0 60px 0 0;
 }
 
 .login-message {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     margin-bottom: 50px;
 }
 
 .input-container {
-    padding: 10px 0;
-    margin: 10px 10px 20px 0;
+    padding: 18px 0;
+    margin-bottom: 30px;
     position: relative;
 }
 
@@ -50,56 +119,95 @@
     position: absolute;
     top: 1%;
     color: #584b4f;
+    font-size: 1.33rem;
+    animation: bigger-font 0.3s;
 }
 
 .login-input {
-    width: 100%;
-    padding: 10px 1px;
-    font-size: 0.9rem;
+    width: 70%;
+    font-size: 1.4rem;
     font-weight: 200;
     background: inherit;
     outline: none;
     border: none;
-    border-bottom: 1px solid black;
     font-family: "Raleway", sans-serif;
+    position: absolute;
+    border-bottom: 1px solid;
+    border-image: linear-gradient(to right, rgba(0, 0, 0, .117188) 0%, rgb(88, 75, 79) 60%, rgba(0, 0, 0, .117188) 100%);
+    border-image-slice: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 3px 3px 3px 2px;
+    color: #252434;
 }
 
 .login-input:focus {
-    padding: 20px 0;
+    padding: 5px;
     animation: expand-input 0.5s;
 }
 
 
-@keyframes expand-input {
-  0%   { padding-bottom: 10px; }
-  100% { padding-bottom: 20px; }
+.login-input:focus + .login-label {
+    font-size: 1rem;
+    animation: smaller-font 0.5s;
 }
 
-.login-button {
+@keyframes expand-input {
+  0%   { padding-bottom: 3px; }
+  100% { padding-bottom: 5px; }
+}
+
+@keyframes smaller-font {
+  0%   { font-size: 1.33rem; }
+  100% { font-size: 1rem; }
+}
+
+@keyframes bigger-font {
+  0%   { font-size: 1rem; }
+  100% { font-size: 1.33rem; }
+}
+
+.login-button,
+.register-button,
+.signup-button {
     background-color: #252434;
     text-transform: uppercase;
     text-align: center;
     padding: 13px 35px;
-    font-size: 0.7rem;
+    font-size: 1rem;
     font-weight: 200;
     color: #F7F8F8;
     outline: none;
     border: 1px solid #252434;
     transition: background-color 0.2s linear;
     font-family: "Raleway", sans-serif;
-    margin-top: 25px;
+    margin-right: auto;
+    margin-top: 10px;
 }
 
-.login-button:hover {
+.login-button:hover,
+.register-button:hover,
+.signup-button:hover {
     background-color: #F7F8F8;
     color: #252434;
     border: 1px solid #252434;
     outline: none;
+    font-weight: 400;
 }
 
 .social-login-container {
     padding-left: 50px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.alternative-login-title {
+    text-align: center;
+    line-height: 33px;
+    font-size: 2.3rem;
 }
 
 .highlighted-text {
@@ -109,7 +217,7 @@
 .social-icons-container {
     display: flex;
     justify-content: center;
-    margin: 30px 0;;
+    margin: 18px 0 0;
 }
 
 .social-login-button,
@@ -119,8 +227,8 @@
     background: url(../assets/facebook.png) center/100% 100% no-repeat;
     border: none;
     color: #F7F8F8;
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
     outline: none;
     margin: 0 10px 0;
 }
@@ -129,29 +237,151 @@
     background: url(../assets/google.png) center/100% 100% no-repeat;
 }
 
+.new-account-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    bottom: 3%;
+}
+
+.new-account-message {
+    margin: 50px 0 0;
+    text-align: center;
+    font-size: 1.9rem;
+}
+
+.signup-button {
+    background-color: #226654;
+    border: 1px solid #226654;
+    margin: 15px auto 0;
+    padding: 10px 30px;
+}
+
+.signup-button:hover {
+    background-color: #18483b;
+    border: 1px solid #18483b;
+    color: #F7F8F8;
+    font-weight: 200;
+}
+
+.login-error {
+    background: url(../assets/error.png) 8px 50%/18px no-repeat;
+    font-size: 1.2rem;
+    padding: 10px 10px 10px 35px;
+    background-color: #a82026;
+    color: #F7F8F8;
+    font-weight: 400;
+    margin: 0 auto 35px 0;
+    border-radius: 5px;
+    animation: fade 0.3s;
+}
+
+@keyframes fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.visible {
+    visibility: visible;
+}
+
+
+.register-container {
+    justify-content: center;
+}
+
+.register-title {
+    margin: 0 0 80px;
+}
+
+.register-main-container {
+    display: flex;
+}
+
+.register-button {
+    letter-spacing: 1px;
+    background: url(../assets/right-white-arrow.png) 83px 50%/18px no-repeat #252434;
+    padding: 13px 35px 13px 20px;
+}
+
+.register-button:hover {
+    letter-spacing: 1px;
+    background: url(../assets/right-black-arrow.png) 83px 50%/18px no-repeat  #F7F8F8;
+    padding: 13px 35px 13px 20px;
+    color: #252434;
+}
+
+.redirect-container {
+    margin: 0 0 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.redirect-message {
+    text-align: center;
+    font-weight: 100;
+    font-size: 3rem;
+    margin-right: 0;
+}
+
+.error-tooltip {
+    position: absolute;
+    background-color: #a82026;
+    color: #f7f8f8;
+    padding: 9px 10px;
+    width: 70%;
+    text-align: center;
+    bottom: 5px;
+    font-size: 1.2rem;
+    z-index: 3;
+    font-weight: 200;
+    letter-spacing: 0.4px;
+}
+
+.error-tooltip:after {
+    content: "";
+    width: 0px;
+    height: 0px;
+    border-left: 8px solid rgba(0, 30, 84, 0);
+    border-right: 8px solid transparent;
+    border-top: 8px solid #a82026;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    z-index: 4;
+    margin-left: -6px;
+}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+
+html {
+  /* height: 100%; */
+  font-size: 62.5%;
+}
+
 body {
   font-family: 'Raleway', sans-serif;
   background-color: #252434;
-
-  font-size: 13px;
+  /* min-height: 100%; */
 }
 
 
 .home-container {
     width: 100%;
-    margin: 40px auto;
+    padding: 40px 0;
 }
 
 h1 {
   font-family: 'Raleway', sans-serif;
   color: #584b4f;
-  font-size: 3rem;
+  font-size: 4.3rem;
   text-align: right;
   font-weight: 300;
   margin-right: 40px;
@@ -159,7 +389,7 @@ h1 {
 
 h3 {
   color: #F7F8F8;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 600;
 }
 
@@ -180,7 +410,7 @@ a.get-started {
   padding: 15px 20px;
   text-decoration: none;
   margin: 20px 0;
-  font-size: 1rem;
+  font-size: 1.4rem;
   width: 15%;
   text-align: center;
   transition: background-color linear 0.2s;
@@ -188,7 +418,7 @@ a.get-started {
 }
 
 .separator {
-  margin: 40px 0;
+  margin: 30px 0;
   padding: 50px 0 50px 100px;
   background: #584b4f;
   height: 45vh;
