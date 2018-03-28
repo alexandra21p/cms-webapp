@@ -13,7 +13,7 @@ header.profile-header {
 }
 
 button.logout-button {
-    background-color: #fb9a88;
+    background-color: #f9aea4;
     border: 1px solid #252434;
     color: #252434;
     padding: 8px 13px;
@@ -26,8 +26,8 @@ button.logout-button {
 
 button.logout-button:hover {
     background-color: #252434;
-    border: 1px solid #fb9a88;
-    color: #fb9a88;
+    border: 1px solid #f9aea4;
+    color: #f9aea4;
 }
 
 .profile-welcome-message {
@@ -38,7 +38,7 @@ button.logout-button:hover {
 aside.sidebar {
     width: 15%;
     flex: 1;
-    background-color: #fb9a88;
+    background-color: #f9aea4;
 }
 
 .avatar {
@@ -69,7 +69,7 @@ main.profile-main-container {
 }
 
 .no-websites-message {
-    color: #fb9a88;
+    color: #f9aea4;
     font-size: 3rem;
     font-weight: 100;
     text-align: center;
@@ -78,8 +78,8 @@ main.profile-main-container {
 
 .profile-navigation-button {
     background-color: inherit;
-    border: 1px solid #fb9a88;
-    color: #fb9a88;
+    border: 1px solid #f9aea4;
+    color: #f9aea4;
     padding: 15px;
     margin: 30px auto;
     font-family: "Raleway", sans-serif;
@@ -92,7 +92,7 @@ main.profile-main-container {
 }
 
 .profile-navigation-button:hover {
-    background-color: #fb9a88;
-    border: 1px solid #fb9a88;
+    background-color: #f9aea4;
+    border: 1px solid #f9aea4;
     color: #252434;
 }

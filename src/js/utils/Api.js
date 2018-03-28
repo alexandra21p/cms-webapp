@@ -4,10 +4,12 @@ const headers = {
     "Content-Type": "application/json",
 };
 
-function apiPost( url, data ) {
+function apiPost( url, data, extraHeaders = {} ) {
+    const reqHeaders = Object.assign( {}, headers, extraHeaders );
+
     return fetch( url, {
         method: "POST",
-        headers,
+        headers: reqHeaders,
         body: JSON.stringify( data ),
     } )
         .then( ( response ) => {

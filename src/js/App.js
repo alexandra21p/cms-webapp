@@ -30,6 +30,7 @@ class App extends React.Component {
         this.handleLocalLogin = this.handleLocalLogin.bind( this );
         this.handleSocialLogin = this.handleSocialLogin.bind( this );
         this.handleLocalRegister = this.handleLocalRegister.bind( this );
+        this.handleLogout = this.handleLogout.bind( this );
         this.hideRedirectMessage = this.hideRedirectMessage.bind( this );
         this.getUserProfile = this.getUserProfile.bind( this );
     }
@@ -48,21 +49,17 @@ class App extends React.Component {
             return;
         }
 
-        // const loginStatus = checkProviderLoginStatus( provider );
-        // if ( !loginStatus ) {
-        //     localStorage.removeItem( "auth" );
-        //     localStorage.removeItem( "userDetails" );
-        //     this.setState( { isAuthenticated: false } );
-        //     return;
-        // }
         this.setState( { isAuthenticated: true } );
     }
 
-    getUserProfile( authToken, userId ) {
-        console.log( authToken, userId, this );
+    getUserProfile( id, provider, authToken, socialAuthToken ) {
+        const headers = socialAuthToken ? {
+            "x-access-token": authToken,
+            "access-token": socialAuthToken,
+        } : { "x-access-token": authToken };
         apiGet(
-            `/api/users/getProfile/${ userId }`,
-            { "x-access-token": authToken },
+            `/api/users/getProfile/${ provider }/${ id }`,
+            headers,
         )
             .then( ( { payload } ) => {
                 this.setState( { user: payload } );
@@ -78,7 +75,9 @@ class App extends React.Component {
             { email, password, provider },
         )
             .then( payload => {
-                const { token, user: { id } } = payload;
+                const { token, user: { providers } } = payload;
+                const id = providers.find( prov =>
+                    prov.email === email && prov.type === provider );
                 const reversedId = id.split( "" ).reverse().join( "" );
                 const encryptedToken = encryptToken( token, id, reversedId );
 
@@ -150,21 +149,51 @@ class App extends React.Component {
             } );
     }
 
+    handleLogout( email, provider, appToken, socialAuthToken ) {
+        if ( socialAuthToken ) {
+            const headers = socialAuthToken ? {
+                "x-access-token": appToken,
+                access_token: socialAuthToken,
+            } : { "x-access-token": appToken };
+            apiPost(
+                "/api/users/logout",
+                { email, provider },
+                headers,
+            )
+                .then( () => {} )
+                .catch( ( error ) => {
+                    console.log( error );
+                } );
+        }
+
+        this.setState( { isAuthenticated: false } );
+        localStorage.removeItem( "auth" );
+        localStorage.removeItem( "userDetails" );
+        this.props.history.replace( "/login" );
+    }
+
     handleSocialLogin( provider, accessToken ) {
         apiPost(
             `/api/users/auth/${ provider }`,
-            { access_token: accessToken },
+            {
+                access_token: accessToken,
+                provider,
+            },
+
         )
             .then( payload => {
-                const { token, user: { providers, id } } = payload;
-                const { email } = providers.find( prov => prov.type === provider );
+                const { token, user: { providers, socialAccessToken } } = payload;
+
+                const { email, profileId: id } = providers.find( prov => prov.type === provider );
                 const reversedId = id.split( "" ).reverse().join( "" );
                 const encryptedToken = encryptToken( token, id, reversedId );
 
                 localStorage.setItem( "auth", encryptedToken );
                 localStorage.setItem(
                     "userDetails",
-                    JSON.stringify( { id, email, provider } ),
+                    JSON.stringify( {
+                        id, email, provider, socialAuthToken: socialAccessToken,
+                    } ),
                 );
 
                 this.setState(
@@ -207,6 +236,7 @@ class App extends React.Component {
             handleLocalLogin: this.handleLocalLogin,
             handleSocialLogin: this.handleSocialLogin,
             handleLocalRegister: this.handleLocalRegister,
+            handleLogout: this.handleLogout,
             hideRedirectMessage: this.hideRedirectMessage,
             getUserProfile: this.getUserProfile,
             user,

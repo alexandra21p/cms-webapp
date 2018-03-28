@@ -16,19 +16,31 @@ export default class Profile extends React.Component {
 
     componentDidMount() {
         const { getUserProfile } = this.props.options;
-        const { id } = JSON.parse( localStorage.getItem( "userDetails" ) );
+        const {
+            id, socialAuthToken, provider,
+        } = JSON.parse( localStorage.getItem( "userDetails" ) );
         const token = localStorage.getItem( "auth" );
 
         const reversedId = id.split( "" ).reverse().join( "" );
         const decryptedToken = decryptToken( token, id, reversedId );
+        const decryptedSocialToken = decryptToken( socialAuthToken, id, reversedId );
 
-        getUserProfile( decryptedToken, id );
+        getUserProfile( id, provider, decryptedToken, decryptedSocialToken );
     }
 
     handleLogout() {
-        localStorage.removeItem( "auth" );
-        localStorage.removeItem( "userDetails" );
-        this.props.history.replace( "/login" );
+        const { handleLogout } = this.props.options;
+        const {
+            id, socialAuthToken, email, provider,
+        } = JSON.parse( localStorage.getItem( "userDetails" ) );
+        const token = localStorage.getItem( "auth" );
+
+        const reversedId = id.split( "" ).reverse().join( "" );
+        const decryptedSocialToken = socialAuthToken ?
+            decryptToken( socialAuthToken, id, reversedId ) : "";
+        const decryptedToken = decryptToken( token, id, reversedId );
+
+        handleLogout( email, provider, decryptedToken, decryptedSocialToken );
     }
 
     showCreatedSites() {
@@ -78,6 +90,7 @@ Profile.propTypes = {
     options: PropTypes.shape( {
         getUserProfile: PropTypes.func.isRequired,
         user: PropTypes.object.isRequired,
+        handleLogout: PropTypes.func.isRequired,
     } ).isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
