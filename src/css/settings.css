@@ -1,0 +1,37 @@
+.settings-page {
+    background-color: #f7f8f8;
+}
+
+.settings-header {
+    background-color: #f9aea4;
+}
+
+.header-user-info {
+    display: flex;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.user-icon {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.header-user-info span {
+    font-size: 1.4rem;
+    margin-left: 10px;
+}
+
+
+button.back-button {
+    background-color: #f9aea4;
+    border: 1px solid #252434;
+    color: #252434;
+    padding: 10px 13px;
+    font-size: 1.4rem;
+    margin-left: 30px;
+    text-transform: capitalize;
+    transition: background-color 0.3s linear;
+    border-radius: 3px;
+}

@@ -23,7 +23,8 @@ export default class Profile extends React.Component {
 
         const reversedId = id.split( "" ).reverse().join( "" );
         const decryptedToken = decryptToken( token, id, reversedId );
-        const decryptedSocialToken = decryptToken( socialAuthToken, id, reversedId );
+        const decryptedSocialToken = socialAuthToken ?
+            decryptToken( socialAuthToken, id, reversedId ) : "";
 
         getUserProfile( id, provider, decryptedToken, decryptedSocialToken );
     }
@@ -62,6 +63,8 @@ export default class Profile extends React.Component {
 
     render() {
         const { user: { avatar, displayName } } = this.props.options;
+        const { email } = JSON.parse( localStorage.getItem( "userDetails" ) );
+
         return (
             <div className="profile-page">
                 <header className="profile-header">
@@ -74,6 +77,14 @@ export default class Profile extends React.Component {
                 <div className="profile-container">
                     <aside className="sidebar">
                         <img src={ avatar } alt="avatar" className="avatar" />
+                        <span className="profile-email">{email}</span>
+                        <nav className="profile-side-navigation">
+                            <li className="profile-navigation-item">
+                                <Link to="/settings" className="profile-nav-link" >
+                                Account Settings
+                                </Link>
+                            </li>
+                        </nav>
                     </aside>
 
                     <main className="profile-main-container">

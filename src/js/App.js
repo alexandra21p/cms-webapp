@@ -76,8 +76,9 @@ class App extends React.Component {
         )
             .then( payload => {
                 const { token, user: { providers } } = payload;
-                const id = providers.find( prov =>
+                const { profileId: id } = providers.find( prov =>
                     prov.email === email && prov.type === provider );
+
                 const reversedId = id.split( "" ).reverse().join( "" );
                 const encryptedToken = encryptToken( token, id, reversedId );
 

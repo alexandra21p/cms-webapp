@@ -36,17 +36,61 @@ button.logout-button:hover {
 }
 
 aside.sidebar {
-    width: 15%;
+    width: 13%;
     flex: 1;
-    background-color: #f9aea4;
+    background-color: #226654;
 }
 
 .avatar {
     max-width: 100px;
     height: 100px;
-    margin: 40px auto 10px;
+    margin: 50px auto 10px;
     display: block;
     border-radius: 50%;
+}
+
+.profile-email {
+    text-align: center;
+    display: block;
+    margin: 15px auto;
+    color: #f9aea4;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+    font-weight: 300;
+}
+
+.profile-side-navigation {
+    margin: 70px 0 30px;
+    list-style-type: none;
+}
+
+.profile-navigation-item {
+    /*padding: 18px 0;*/
+    transition: background-color 0.3s linear;
+    cursor: pointer;
+    /*border-bottom: 1px solid rgba(255, 255, 255, .167969);
+    border-top: 1px solid rgba(255, 255, 255, .167969);*/
+}
+
+.profile-nav-link {
+    text-align: left;
+    transition: background-color 0.3s linear;
+    border-bottom: 1px solid rgba(255, 255, 255, .167969);
+    border-top: 1px solid rgba(255, 255, 255, .167969);
+    color: #f7f8f8;
+    font-weight: 100;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #f7f8f8;
+    font-size: 1.05rem;
+    padding: 18px 0;
+    margin: 0 0 0 30px;
+    display: block;
+}
+
+.profile-navigation-item:hover {
+    background-color: #18483b;
 }
 
 .profile-container {
