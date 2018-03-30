@@ -1,9 +1,12 @@
 .settings-page {
     background-color: #f7f8f8;
+    height: 100vh;
 }
 
-.settings-header {
+header.settings-header {
     background-color: #f9aea4;
+    border-bottom: 1px solid #f9aea4;
+    box-shadow: 0 3px 10px 0 #ccc;
 }
 
 .header-user-info {
@@ -26,12 +29,106 @@
 
 button.back-button {
     background-color: #f9aea4;
+    background: url(../assets/back-arrow.png) 10px/16px no-repeat;
     border: 1px solid #252434;
     color: #252434;
-    padding: 10px 13px;
+    padding: 10px 15px 9.5px 28px;
     font-size: 1.4rem;
     margin-left: 30px;
-    text-transform: capitalize;
     transition: background-color 0.3s linear;
     border-radius: 3px;
+}
+
+
+button.back-button:hover{
+    background: url(../assets/back-arrow-pink.png) 10px/16px no-repeat;
+    background-color: #252434;
+    border: 1px solid #252434;
+    color: #f9aea4;
+}
+
+.settings-container {
+    background-color: rgba(0, 0, 0, .117188);
+    height: 100%;
+    padding: 40px 200px;
+}
+
+.settings-title {
+    margin: 40px 0 70px;
+    border-bottom: 5px solid;
+    padding: 0 0 5px;
+    border-image: linear-gradient(to right, #edbbb0 0%, rgb(88, 75, 79) 60%, rgba(249, 174, 164, .25) 100%);
+    border-image-slice: 1;
+}
+
+.special-text {
+    font-weight: 200;
+    color: rgba(0, 30, 84, .296875);
+}
+
+.settings-block {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 25px 40px;
+    background-color: #f7f8f8;
+    border-radius: 3px;
+}
+
+.settings-subtitle {
+    flex-basis: 100%;
+    color: #f9aea4;
+    font-weight: 200;
+    font-size: 2.2rem;
+    margin: 8px 0 20px;
+}
+
+.user-info-container {
+    flex: 2;
+}
+
+.update-avatar-container {
+    flex: 1.2;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.settings-avatar {
+    max-width: 130px;
+    height: 130px;
+    display: block;
+    border-radius: 50%;
+    margin: 0 0 20px;
+}
+.file-upload {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.file-upload + .upload-button {
+    cursor: pointer;
+    padding: 13px 15px;
+    border: 1px solid;
+    border-radius: 5px;
+    font-size: 1.4rem;
+    font-weight: 200;
+    background-color: #226654;
+    color: #f6f7f9;
+    transition: background-color .4s linear;
+}
+
+.file-upload + .upload-button:hover {
+    background-color: #18483b;
+}
+
+.remove-image-button {
+    font-size: 1.3rem;
+    padding: 10px;
+    font-weight: 200;
+    color: rgb(88, 75, 79);
 }

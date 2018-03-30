@@ -5,8 +5,9 @@
 
 header.profile-header {
     height: 10vh;
-    border-bottom: 1px solid #584b4f;
-    box-shadow: 0 1px 5px 0 rgba(249, 174, 164, .25);
+    border-bottom: 1px solid #f9aea452;
+    /*border-bottom: 1px solid #584b4f;*/
+    /*box-shadow: 0 1px 5px 0 rgba(249, 174, 164, .25);*/
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -65,11 +66,8 @@ aside.sidebar {
 }
 
 .profile-navigation-item {
-    /*padding: 18px 0;*/
     transition: background-color 0.3s linear;
     cursor: pointer;
-    /*border-bottom: 1px solid rgba(255, 255, 255, .167969);
-    border-top: 1px solid rgba(255, 255, 255, .167969);*/
 }
 
 .profile-nav-link {
@@ -91,6 +89,13 @@ aside.sidebar {
 
 .profile-navigation-item:hover {
     background-color: #18483b;
+    border-bottom: 1px solid rgba(255, 255, 255, .167969);
+    border-top: 1px solid rgba(255, 255, 255, .167969);
+}
+
+
+.profile-navigation-item:hover .profile-nav-link {
+    border: none;
 }
 
 .profile-container {
