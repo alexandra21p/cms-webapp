@@ -115,6 +115,7 @@ export default class Login extends React.Component {
                             }
                             <FormInput
                                 inputName="email"
+                                className="input-container"
                                 labelText="Email Address"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
@@ -125,6 +126,7 @@ export default class Login extends React.Component {
 
                             <FormInput
                                 inputName="password"
+                                className="input-container"
                                 labelText="Password"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }

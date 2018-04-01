@@ -1,12 +1,16 @@
 .settings-page {
-    background-color: #f7f8f8;
-    height: 100vh;
+    background-color: #dadbdb;
+    /* height: 100vh; */
 }
 
 header.settings-header {
     background-color: #f9aea4;
     border-bottom: 1px solid #f9aea4;
-    box-shadow: 0 3px 10px 0 #ccc;
+    box-shadow: 0 3px 10px 0 rgba(82, 82, 82, 0.3);
+    height: 11vh;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
 }
 
 .header-user-info {
@@ -16,31 +20,31 @@ header.settings-header {
 }
 
 .user-icon {
-    height: 50px;
-    width: 50px;
+    height: 43px;
+    width: 43px;
     border-radius: 50%;
 }
 
 .header-user-info span {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin-left: 10px;
 }
 
 
 button.back-button {
     background-color: #f9aea4;
-    background: url(../assets/back-arrow.png) 10px/16px no-repeat;
+    background: url(../assets/back-arrow.png) 12px/14px no-repeat;
     border: 1px solid #252434;
     color: #252434;
-    padding: 10px 15px 9.5px 28px;
-    font-size: 1.4rem;
+    padding: 10px 15px 8.4px 28px;
+    font-size: 1.2rem;
     margin-left: 30px;
     transition: background-color 0.3s linear;
     border-radius: 3px;
 }
 
 
-button.back-button:hover{
+button.back-button:hover {
     background: url(../assets/back-arrow-pink.png) 10px/16px no-repeat;
     background-color: #252434;
     border: 1px solid #252434;
@@ -48,9 +52,12 @@ button.back-button:hover{
 }
 
 .settings-container {
-    background-color: rgba(0, 0, 0, .117188);
+    /* background-color: rgba(0, 0, 0, .117188); */
     height: 100%;
-    padding: 40px 200px;
+    width: 60%;
+    padding: 100px 0 100px;
+    margin: auto;
+    position: relative;
 }
 
 .settings-title {
@@ -69,25 +76,78 @@ button.back-button:hover{
 .settings-block {
     display: flex;
     flex-wrap: wrap;
-    padding: 10px 25px 40px;
+    flex-direction: column;
+    padding: 20px 50px 55px;
     background-color: #f7f8f8;
     border-radius: 3px;
+    margin-bottom: 30px;
+}
+
+.centered-content {
+    justify-content: center;
 }
 
 .settings-subtitle {
     flex-basis: 100%;
-    color: #f9aea4;
-    font-weight: 200;
+    color: #fb9a88;
+    font-weight: 300;
     font-size: 2.2rem;
-    margin: 8px 0 20px;
+    margin: 8px 0 60px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid rgba(0, 0, 0, .117188);
 }
 
 .user-info-container {
-    flex: 2;
+    flex-basis: 70%;
+    padding-right: 65px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.settings-input-container {
+    margin-bottom: 60px;
+}
+
+.centered-content .user-info-container {
+    padding-right: 0;
+}
+.settings-input {
+    width: 100%;
+    animation: none;
+    padding: 11px 3px 3px 2px;
+    color: #fb9a88;
+    font-weight: 600;
+    letter-spacing: .6px;
+}
+
+
+.settings-input:focus {
+    padding: 11px 3px 3px 2px;
+    animation: none;
+}
+.settings-label {
+    font-size: 1.5rem;
+    animation: bigger-font-settings 0.5s;
+}
+
+.settings-input:focus + .settings-label {
+    font-size: 1rem;
+    animation: smaller-font-settings 0.5s;
+}
+
+@keyframes smaller-font-settings {
+  0%   { font-size: 1.5rem; }
+  100% { font-size: 1rem; }
+}
+
+@keyframes bigger-font-settings {
+  0%   { font-size: 1rem; }
+  100% { font-size: 1.5rem; }
 }
 
 .update-avatar-container {
-    flex: 1.2;
+    margin-top: 20px;
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -95,8 +155,8 @@ button.back-button:hover{
 }
 
 .settings-avatar {
-    max-width: 130px;
-    height: 130px;
+    max-width: 120px;
+    height: 120px;
     display: block;
     border-radius: 50%;
     margin: 0 0 20px;
@@ -129,6 +189,79 @@ button.back-button:hover{
 .remove-image-button {
     font-size: 1.3rem;
     padding: 10px;
-    font-weight: 200;
+    font-weight: 300;
     color: rgb(88, 75, 79);
+    cursor: pointer;
+}
+
+.save-button {
+    padding: 13px 18px;
+    background-color: #fb9a88;
+    margin-top: 30px;
+    border-radius: 3px;
+    color: #252434;
+    background: -webkit-linear-gradient(right, #fb9a88, #f9aea4);
+    background: -moz-linear-gradient(to right,  #fb9a88, #f9aea4);
+    background: linear-gradient(to right, #fb9a88, #f9aea4);
+    transition: background .4s linear;
+    border: 1px solid rgba(0, 0, 0, .117188);
+    margin-right: auto;
+}
+
+.save-button:hover {
+    background-position: 122px;
+}
+
+.modal-container {
+    position: fixed;
+    z-index: 15;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(37, 36, 52, .8);
+    border: 1px solid;
+}
+
+.popup-modal {
+    position: fixed;
+    max-width: 40%;
+    height: 220px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    padding: 25px 30px;
+    border-radius: 3px;
+    background-color: #f9aea4;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.modal-title,
+.modal-subtitle {
+    font-size: 2.4rem;
+    text-align: center;
+    flex-basis: 100%;
+    font-weight: 300;
+    letter-spacing: .2px;
+    padding-bottom: 5px;
+}
+
+.modal-subtitle {
+    font-size: 1.55rem;
+    color: #f7f8f8;
+    font-weight: 400;
+    margin-bottom: 35px;
+}
+
+.modal-button {
+    background-color: #252434;
+    padding: 10px 15px;
+    width: 100px;
+    font-size: 1.1rem;
+    letter-spacing: .5px;
+    border-radius: 2px;
+    font-weight: 600;
+    margin: 0 25px 25px 25px;
 }

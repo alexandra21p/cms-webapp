@@ -4,9 +4,10 @@ import PropTypes from "prop-types";
 import { capitalize } from "../utils/helperMethods";
 
 const FormInput = ( {
-    onInputChange, inputName, labelText, isContentHidden, value, isMissing, onFocus,
+    onInputChange, className, inputName, labelText, isContentHidden,
+    value, isMissing, onFocus, inputClass = "login-input", labelClass = "login-label",
 } ) => (
-    <div className="input-container">
+    <div className={ className }>
         {
             isMissing ? (
                 <div className="error-tooltip">
@@ -18,14 +19,14 @@ const FormInput = ( {
         <input
             name={ inputName }
             type={ isContentHidden ? "password" : "text" }
-            className="login-input"
+            className={ inputClass }
             onChange={ onInputChange }
             onFocus={ onFocus }
             value={ value }
         />
         <label
             htmlFor={ inputName }
-            className="login-label"
+            className={ labelClass }
         >{labelText}
         </label>
     </div>
@@ -35,11 +36,18 @@ const FormInput = ( {
 FormInput.propTypes = {
     onInputChange: PropTypes.func.isRequired,
     inputName: PropTypes.string.isRequired,
+    className: PropTypes.string.isRequired,
     labelText: PropTypes.string.isRequired,
     isContentHidden: PropTypes.bool.isRequired,
     value: PropTypes.string.isRequired,
     isMissing: PropTypes.bool.isRequired,
     onFocus: PropTypes.func.isRequired,
+    inputClass: PropTypes.string,
+    labelClass: PropTypes.string,
 };
 
+FormInput.defaultProps = {
+    inputClass: "login-input",
+    labelClass: "login-label",
+};
 export default FormInput;

@@ -154,6 +154,7 @@ export default class SignUp extends React.Component {
 
                             <FormInput
                                 inputName="name"
+                                className="input-container"
                                 labelText="What's your name?"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
@@ -164,6 +165,7 @@ export default class SignUp extends React.Component {
 
                             <FormInput
                                 inputName="email"
+                                className="input-container"
                                 labelText="Email Address"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
@@ -174,6 +176,7 @@ export default class SignUp extends React.Component {
 
                             <FormInput
                                 inputName="password"
+                                className="input-container"
                                 labelText="Password"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
@@ -184,6 +187,7 @@ export default class SignUp extends React.Component {
 
                             <FormInput
                                 inputName="retyped Password"
+                                className="input-container"
                                 labelText="Your password again"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
