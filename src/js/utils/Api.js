@@ -25,6 +25,27 @@ function apiPost( url, data, extraHeaders = {} ) {
         } );
 }
 
+function apiPut( url, data, extraHeaders = {} ) {
+    const reqHeaders = Object.assign( {}, headers, extraHeaders );
+
+    return fetch( url, {
+        method: "PUT",
+        headers: reqHeaders,
+        body: JSON.stringify( data ),
+    } )
+        .then( ( response ) => {
+            if ( response.status === 200 ) {
+                return response.json();
+            } return ( response.status );
+        } )
+        .then( ( res ) => {
+            if ( !res.success ) {
+                throw new Error( res );
+            }
+            return res.payload;
+        } );
+}
+
 function apiGet( url, header = {} ) {
     const reqHeaders = Object.assign( {}, headers, header );
 
@@ -43,4 +64,5 @@ function apiGet( url, header = {} ) {
 export {
     apiGet,
     apiPost,
+    apiPut,
 };

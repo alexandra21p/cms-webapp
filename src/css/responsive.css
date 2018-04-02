@@ -12,3 +12,24 @@
         width: 50%;
     }
 }
+
+
+@media only screen and (min-width: 1450px ) {
+    .login-container,
+    .register-container {
+        width: 50%;
+    }
+
+    .login-title,
+    .register-title {
+        font-size: 6.3rem;
+    }
+
+    aside.sidebar {
+        flex: 0.7;
+    }
+
+    .settings-container {
+        width: 40%;
+    }
+}

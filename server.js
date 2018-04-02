@@ -13,13 +13,12 @@ app.use( bodyParser.urlencoded( { extended: false } ) );
 app.use( bodyParser.json( ) );
 
 app.use( "/api", ( req, res ) => {
-    const { url: reqUrl, method } = req;
+    const { url: reqUrl, method, headers } = req;
     const url = `http://localhost:3030${ reqUrl }`;
 
     const requestOptions = {
         url,
-        headers: {
-        },
+        headers,
         method,
     };
 

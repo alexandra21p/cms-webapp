@@ -5,12 +5,15 @@ import "../../css/settings.css";
 import "../../css/responsive.css";
 
 import FormInput from "../components/FormInput";
+import Modal from "../components/Modal";
+import SettingsAvatar from "../components/SettingsAvatar";
+
+import { defaultAvatar, decryptAppTokens } from "../utils/helperMethods";
 
 export default class Settings extends React.Component {
     constructor() {
         super();
         this.state = {
-            // uploadedImage: "",
             unsavedChanges: false,
             validationErrors: {
                 name: false,
@@ -22,6 +25,7 @@ export default class Settings extends React.Component {
             email: "",
             newPassword: "",
             newRetypedPassword: "",
+            uploadedImage: "",
             showModal: false,
         };
 
@@ -30,6 +34,9 @@ export default class Settings extends React.Component {
         this.handleInputFocus = this.handleInputFocus.bind( this );
         this.onModalLeaveClick = this.onModalLeaveClick.bind( this );
         this.onModalStayClick = this.onModalStayClick.bind( this );
+        this.removeImage = this.removeImage.bind( this );
+        this.saveGeneralProfileChanges = this.saveGeneralProfileChanges.bind( this );
+        this.savePasswordChanges = this.savePasswordChanges.bind( this );
     }
 
     onModalLeaveClick() {
@@ -52,6 +59,24 @@ export default class Settings extends React.Component {
 
     handleInputChange( evt ) {
         const { name, value } = evt.target;
+
+        if ( name === "uploadedImage" ) {
+            const file = evt.target.files[ 0 ];
+            console.log( file );
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                console.log( reader );
+                this.setState( {
+                    [ name ]: reader.result,
+                    unsavedChanges: true,
+                } );
+            };
+
+            reader.readAsDataURL( file );
+            return;
+        }
+
         this.setState( {
             [ name ]: value,
             unsavedChanges: true,
@@ -69,41 +94,84 @@ export default class Settings extends React.Component {
         } );
     }
 
+    removeImage() {
+        this.setState( {
+            uploadedImage: defaultAvatar,
+        } );
+    }
+
+    saveGeneralProfileChanges() {
+        const { email, name, uploadedImage } = this.state;
+        const { handleProfileUpdate } = this.props.options;
+        const invalidEmail = email === "";
+        const invalidName = name === "";
+
+        if ( invalidName || invalidEmail ) {
+            this.setState( {
+                validationErrors: {
+                    name: invalidName,
+                    email: invalidEmail,
+                },
+            } );
+            return;
+        }
+
+        handleProfileUpdate( email, name, uploadedImage );
+    }
+
+    savePasswordChanges() {
+        const { newPassword, newRetypedPassword } = this.state;
+        const { handlePasswordChange } = this.props.options;
+        const invalidPassword = newPassword === "";
+        const invalidRetypedPassword = newRetypedPassword === "";
+
+        if ( invalidPassword || invalidRetypedPassword ) {
+            this.setState( {
+                validationErrors: {
+                    newPassword: invalidPassword,
+                    newRetypedPassword: invalidRetypedPassword,
+                },
+            } );
+            return;
+        }
+
+        const userDetails = decryptAppTokens();
+
+        handlePasswordChange( newPassword, newRetypedPassword, userDetails );
+    }
+
     render() {
         const {
-            name, email, newPassword, newRetypedPassword, validationErrors, showModal,
+            name, email, newPassword, newRetypedPassword, validationErrors,
+            showModal, uploadedImage,
         } = this.state;
         const {
             name: invalidName, email: invalidEmail, newPassword: invalidNewPassword,
             newRetypedPassword: invalidNewRetypedPassword,
         } = validationErrors;
+
+        const { error, user } = this.props.options;
+        const { password } = user;
+
         return (
             <div className="settings-page">
                 { showModal &&
-                    <div className="modal-container">
-                        <div className="popup-modal">
-                            <h4 className="modal-title">There are unsaved changes!</h4>
-                            <h5 className="modal-subtitle">Are you sure you want to leave?</h5>
-                            <button
-                                className="login-button modal-button"
-                                onClick={ this.onModalLeaveClick }
-                            >Leave
-                            </button>
-                            <button
-                                className="login-button modal-button"
-                                onClick={ this.onModalStayClick }
-                            >Stay
-                            </button>
-                        </div>
-                    </div>
-
+                    <Modal
+                        title="There are unsaved changes!"
+                        subtitle="Are you sure you want to leave?"
+                        acceptButtonText="Leave"
+                        cancelButtonText="Stay"
+                        onAcceptHandler={ this.onModalLeaveClick }
+                        onCancelHandler={ this.onModalStayClick }
+                    />
                 }
+
                 <header className="profile-header settings-header">
                     <button className="back-button" onClick={ this.handleBackClick }>
             Back to profile
                     </button>
                     <div className="header-user-info">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3NqEUNv2tWAn1Ty_tUyeowjBNGJVyOqu21mi_P0hQObF2SDmX" alt="avatar" className="user-icon" />
+                        <img src={ defaultAvatar } alt="avatar" className="user-icon" />
                         <span>email@email.com</span>
                     </div>
                 </header>
@@ -121,6 +189,7 @@ export default class Settings extends React.Component {
                                 labelText="Name"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
+                                errorTooltipClass="error-tooltip settings-error-tooltip"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
                                 isContentHidden={ false }
@@ -133,6 +202,7 @@ export default class Settings extends React.Component {
                                 labelText="Email Address"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
+                                errorTooltipClass="error-tooltip settings-error-tooltip"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
                                 isContentHidden={ false }
@@ -141,22 +211,16 @@ export default class Settings extends React.Component {
                             />
 
                         </div>
-                        <div className="update-avatar-container">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3NqEUNv2tWAn1Ty_tUyeowjBNGJVyOqu21mi_P0hQObF2SDmX" alt="avatar" className="settings-avatar" />
-                            <input
-                                id="file"
-                                className="file-upload"
-                                type="file"
-                                accept=".jpg, .jpeg, .png"
-                                multiple={ false }
-                            />
-                            <label htmlFor="file" className="upload-button">Upload image</label>
-                            <h5 className="remove-image-button">Remove picture</h5>
-                        </div>
+
+                        <SettingsAvatar
+                            imageSource={ uploadedImage }
+                            onInputChange={ ( evt ) => this.handleInputChange( evt ) }
+                            onRemoveImage={ this.removeImage }
+                        />
 
                         <button
                             className="save-button"
-                            onClick={ this.saveChanges }
+                            onClick={ this.saveGeneralProfileChanges }
                         >Save changes
                         </button>
 
@@ -164,18 +228,24 @@ export default class Settings extends React.Component {
 
                     <div className="settings-block centered-content">
                         <h3 className="settings-subtitle">Change your password</h3>
+
                         <div className="user-info-container centered-content">
+                            {
+                                error.status &&
+                                <h5 className="login-error full-width">
+                                    {error.message}
+                                </h5>
+                            }
+
                             <FormInput
                                 inputName="currentPassword"
                                 className="input-container settings-input-container"
                                 labelText="Current password"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
-                                onInputChange={ ( ) => {} }
-                                onFocus={ () => {} }
                                 isContentHidden
-                                value="blabla"
-                                isMissing={ false }
+                                value={ password }
+                                disabled
                             />
                             <FormInput
                                 inputName="newPassword"
@@ -183,9 +253,10 @@ export default class Settings extends React.Component {
                                 labelText="New password"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
+                                errorTooltipClass="error-tooltip full-width"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
-                                isContentHidden={ false }
+                                isContentHidden
                                 value={ newPassword }
                                 isMissing={ invalidNewPassword }
                             />
@@ -195,16 +266,17 @@ export default class Settings extends React.Component {
                                 labelText="Retype new password"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
+                                errorTooltipClass="error-tooltip full-width"
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
-                                isContentHidden={ false }
+                                isContentHidden
                                 value={ newRetypedPassword }
                                 isMissing={ invalidNewRetypedPassword }
                             />
 
                             <button
                                 className="save-button"
-                                onClick={ this.saveChanges }
+                                onClick={ this.savePasswordChanges }
                             >Save changes
                             </button>
                         </div>
@@ -218,10 +290,14 @@ export default class Settings extends React.Component {
 }
 
 Settings.propTypes = {
-    // options: PropTypes.shape( {
-    //     getUserProfile: PropTypes.func.isRequired,
-    //     user: PropTypes.object.isRequired,
-    //     handleLogout: PropTypes.func.isRequired,
-    // } ).isRequired,
+    options: PropTypes.shape( {
+        user: PropTypes.object.isRequired,
+        handleProfileUpdate: PropTypes.func.isRequired,
+        handlePasswordChange: PropTypes.func.isRequired,
+        error: PropTypes.shape( {
+            status: PropTypes.bool.isRequired,
+            message: PropTypes.string.isRequired,
+        } ).isRequired,
+    } ).isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };

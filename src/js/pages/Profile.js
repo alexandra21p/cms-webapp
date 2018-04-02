@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { decryptToken } from "../utils/helperMethods";
+import { decryptAppTokens } from "../utils/helperMethods";
 import "../../css/profile.css";
 
 export default class Profile extends React.Component {
@@ -17,14 +17,8 @@ export default class Profile extends React.Component {
     componentDidMount() {
         const { getUserProfile } = this.props.options;
         const {
-            id, socialAuthToken, provider,
-        } = JSON.parse( localStorage.getItem( "userDetails" ) );
-        const token = localStorage.getItem( "auth" );
-
-        const reversedId = id.split( "" ).reverse().join( "" );
-        const decryptedToken = decryptToken( token, id, reversedId );
-        const decryptedSocialToken = socialAuthToken ?
-            decryptToken( socialAuthToken, id, reversedId ) : "";
+            id, provider, decryptedToken, decryptedSocialToken,
+        } = decryptAppTokens();
 
         getUserProfile( id, provider, decryptedToken, decryptedSocialToken );
     }
@@ -32,14 +26,8 @@ export default class Profile extends React.Component {
     handleLogout() {
         const { handleLogout } = this.props.options;
         const {
-            id, socialAuthToken, email, provider,
-        } = JSON.parse( localStorage.getItem( "userDetails" ) );
-        const token = localStorage.getItem( "auth" );
-
-        const reversedId = id.split( "" ).reverse().join( "" );
-        const decryptedSocialToken = socialAuthToken ?
-            decryptToken( socialAuthToken, id, reversedId ) : "";
-        const decryptedToken = decryptToken( token, id, reversedId );
+            email, provider, decryptedToken, decryptedSocialToken,
+        } = decryptAppTokens();
 
         handleLogout( email, provider, decryptedToken, decryptedSocialToken );
     }

@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Settings from "./pages/Settings";
 import PrivateRoute from "./components/PrivateRoute";
-import { apiPost, apiGet } from "./utils/Api";
+import { apiPost, apiGet, apiPut } from "./utils/Api";
 import { errors } from "./utils/errors";
 import { getError, encryptToken } from "./utils/helperMethods";
 
@@ -33,6 +33,7 @@ class App extends React.Component {
         this.handleLogout = this.handleLogout.bind( this );
         this.hideRedirectMessage = this.hideRedirectMessage.bind( this );
         this.getUserProfile = this.getUserProfile.bind( this );
+        this.handlePasswordChange = this.handlePasswordChange.bind( this );
     }
 
     componentWillMount() {
@@ -57,6 +58,7 @@ class App extends React.Component {
             "x-access-token": authToken,
             "access-token": socialAuthToken,
         } : { "x-access-token": authToken };
+
         apiGet(
             `/api/users/getProfile/${ provider }/${ id }`,
             headers,
@@ -151,26 +153,26 @@ class App extends React.Component {
     }
 
     handleLogout( email, provider, appToken, socialAuthToken ) {
+        let headers = { "x-access-token": appToken };
+
         if ( socialAuthToken ) {
-            const headers = socialAuthToken ? {
-                "x-access-token": appToken,
-                access_token: socialAuthToken,
-            } : { "x-access-token": appToken };
-            apiPost(
-                "/api/users/logout",
-                { email, provider },
-                headers,
-            )
-                .then( () => {} )
-                .catch( ( error ) => {
-                    console.log( error );
-                } );
+            headers = Object.assign( {}, headers, { access_token: socialAuthToken } );
         }
 
-        this.setState( { isAuthenticated: false } );
-        localStorage.removeItem( "auth" );
-        localStorage.removeItem( "userDetails" );
-        this.props.history.replace( "/login" );
+        apiPost(
+            "/api/users/logout",
+            { email, provider },
+            headers,
+        )
+            .then( () => {
+                this.setState( { isAuthenticated: false } );
+                localStorage.removeItem( "auth" );
+                localStorage.removeItem( "userDetails" );
+                this.props.history.replace( "/login" );
+            } )
+            .catch( ( error ) => {
+                console.log( error );
+            } );
     }
 
     handleSocialLogin( provider, accessToken ) {
@@ -219,6 +221,47 @@ class App extends React.Component {
             } );
     }
 
+    handlePasswordChange( password, retypedPassword, userDetails ) {
+        const differentPasswords = password !== retypedPassword;
+        const message = getError( "different_passwords", errors );
+        const {
+            email, provider, decryptedToken, decryptedSocialToken,
+        } = userDetails;
+
+        if ( differentPasswords ) {
+            this.setState( {
+                error: {
+                    status: true,
+                    message,
+                },
+            } );
+            return;
+        }
+
+        const headers = decryptedSocialToken ? {
+            "x-access-token": decryptedToken,
+            "access-token": decryptedSocialToken,
+        } : { "x-access-token": decryptedToken };
+
+        apiPut(
+            "/api/users/edit",
+            { email, provider, password },
+            headers,
+        )
+            .then( ( payload ) => {
+                this.setState( { user: payload } );
+            } )
+            .catch( ( error ) => {
+                const msg = getError( error.message, errors );
+                this.setState( {
+                    error: {
+                        status: true,
+                        message: msg,
+                    },
+                } );
+            } );
+    }
+
     hideRedirectMessage() {
         this.setState( {
             showSuccessfulRegister: false,
@@ -240,6 +283,7 @@ class App extends React.Component {
             handleLogout: this.handleLogout,
             hideRedirectMessage: this.hideRedirectMessage,
             getUserProfile: this.getUserProfile,
+            handlePasswordChange: this.handlePasswordChange,
             user,
         };
 
