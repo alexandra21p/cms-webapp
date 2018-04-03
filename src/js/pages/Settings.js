@@ -18,19 +18,21 @@ export default class Settings extends React.Component {
             validationErrors: {
                 name: false,
                 email: false,
+                currentPassword: false,
                 newPassword: false,
                 newRetypedPassword: false,
             },
-            name: "",
-            email: "",
+
+            currentPassword: "",
             newPassword: "",
             newRetypedPassword: "",
-            uploadedImage: "",
+            imagePreview: "",
             showModal: false,
         };
 
         this.handleBackClick = this.handleBackClick.bind( this );
         this.handleInputChange = this.handleInputChange.bind( this );
+        this.notifyChanges = this.notifyChanges.bind( this );
         this.handleInputFocus = this.handleInputFocus.bind( this );
         this.onModalLeaveClick = this.onModalLeaveClick.bind( this );
         this.onModalStayClick = this.onModalStayClick.bind( this );
@@ -50,10 +52,14 @@ export default class Settings extends React.Component {
 
     handleBackClick() {
         const { unsavedChanges } = this.state;
+        const { hideMessage } = this.props.options;
+
         if ( unsavedChanges ) {
             this.setState( { showModal: true } );
             return;
         }
+
+        hideMessage();
         this.props.history.replace( "/profile" );
     }
 
@@ -62,13 +68,11 @@ export default class Settings extends React.Component {
 
         if ( name === "uploadedImage" ) {
             const file = evt.target.files[ 0 ];
-            console.log( file );
             const reader = new FileReader();
 
             reader.onloadend = () => {
-                console.log( reader );
                 this.setState( {
-                    [ name ]: reader.result,
+                    imagePreview: reader.result,
                     unsavedChanges: true,
                 } );
             };
@@ -84,6 +88,8 @@ export default class Settings extends React.Component {
     }
 
     handleInputFocus() {
+        const { showSuccessMessage, error, hideMessage } = this.props.options;
+
         this.setState( {
             validationErrors: {
                 name: false,
@@ -92,19 +98,31 @@ export default class Settings extends React.Component {
                 newRetypedPassword: false,
             },
         } );
+
+        if ( showSuccessMessage || error.status ) {
+            hideMessage();
+        }
+    }
+
+    notifyChanges() {
+        this.setState( {
+            unsavedChanges: true,
+        } );
     }
 
     removeImage() {
         this.setState( {
-            uploadedImage: defaultAvatar,
+            imagePreview: defaultAvatar,
+            unsavedChanges: true,
         } );
     }
 
     saveGeneralProfileChanges() {
-        const { email, name, uploadedImage } = this.state;
         const { handleProfileUpdate } = this.props.options;
-        const invalidEmail = email === "";
-        const invalidName = name === "";
+        const { imagePreview } = this.state;
+
+        const invalidEmail = this.email.value === "";
+        const invalidName = this.name.value === "";
 
         if ( invalidName || invalidEmail ) {
             this.setState( {
@@ -116,19 +134,27 @@ export default class Settings extends React.Component {
             return;
         }
 
-        handleProfileUpdate( email, name, uploadedImage );
+        const userDetails = decryptAppTokens();
+        handleProfileUpdate( this.email.value, this.name.value, imagePreview, userDetails );
+
+        this.setState( {
+            unsavedChanges: false,
+        } );
     }
 
     savePasswordChanges() {
-        const { newPassword, newRetypedPassword } = this.state;
         const { handlePasswordChange } = this.props.options;
-        const invalidPassword = newPassword === "";
+        const { currentPassword, newPassword, newRetypedPassword } = this.state;
+
+        const invalidCurrentPassword = currentPassword === "";
+        const invalidNewPassword = newPassword === "";
         const invalidRetypedPassword = newRetypedPassword === "";
 
-        if ( invalidPassword || invalidRetypedPassword ) {
+        if ( invalidCurrentPassword || invalidNewPassword || invalidRetypedPassword ) {
             this.setState( {
                 validationErrors: {
-                    newPassword: invalidPassword,
+                    currentPassword: invalidCurrentPassword,
+                    newPassword: invalidNewPassword,
                     newRetypedPassword: invalidRetypedPassword,
                 },
             } );
@@ -137,21 +163,27 @@ export default class Settings extends React.Component {
 
         const userDetails = decryptAppTokens();
 
-        handlePasswordChange( newPassword, newRetypedPassword, userDetails );
+        handlePasswordChange( currentPassword, newPassword, newRetypedPassword, userDetails );
+
+        this.setState( {
+            unsavedChanges: false,
+        } );
     }
 
     render() {
         const {
-            name, email, newPassword, newRetypedPassword, validationErrors,
-            showModal, uploadedImage,
+            currentPassword, newPassword, newRetypedPassword, validationErrors,
+            showModal, imagePreview,
         } = this.state;
         const {
-            name: invalidName, email: invalidEmail, newPassword: invalidNewPassword,
+            name: invalidName, email: invalidEmail,
+            currentPassword: invalidCurrentPassword, newPassword: invalidNewPassword,
             newRetypedPassword: invalidNewRetypedPassword,
         } = validationErrors;
 
-        const { error, user } = this.props.options;
-        const { password } = user;
+        const { error, user, showSuccessMessage } = this.props.options;
+        const { displayName, avatar, providers } = user;
+        const { email } = providers[ 0 ];
 
         return (
             <div className="settings-page">
@@ -171,8 +203,8 @@ export default class Settings extends React.Component {
             Back to profile
                     </button>
                     <div className="header-user-info">
-                        <img src={ defaultAvatar } alt="avatar" className="user-icon" />
-                        <span>email@email.com</span>
+                        <img src={ avatar } alt="avatar" className="user-icon" />
+                        <span>{ email }</span>
                     </div>
                 </header>
 
@@ -183,18 +215,31 @@ export default class Settings extends React.Component {
                     <div className="settings-block">
                         <h3 className="settings-subtitle">General information</h3>
                         <div className="user-info-container">
+                            {
+                                ( error.status &&
+                                <h5 className="notification-message error full-width">
+                                    {error.message}
+                                </h5> ) ||
+                            ( showSuccessMessage &&
+                                <h5
+                                    className="notification-message full-width"
+                                >
+                            Your changes were successful!
+                                </h5> )
+                            }
                             <FormInput
                                 inputName="name"
                                 className="input-container settings-input-container"
                                 labelText="Name"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
-                                errorTooltipClass="error-tooltip settings-error-tooltip"
-                                onInputChange={ ( evt ) => this.handleInputChange( evt ) }
-                                onFocus={ this.handleInputFocus }
-                                isContentHidden={ false }
-                                value={ name }
+                                errorTooltipClass="error-tooltip full-width"
                                 isMissing={ invalidName }
+                                onlyDefaultValue
+                                value={ displayName }
+                                onInputChange={ this.notifyChanges }
+                                onFocus={ this.handleInputFocus }
+                                refMethod={ ( input ) => { this.name = input; } }
                             />
                             <FormInput
                                 inputName="email"
@@ -202,18 +247,19 @@ export default class Settings extends React.Component {
                                 labelText="Email Address"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
-                                errorTooltipClass="error-tooltip settings-error-tooltip"
-                                onInputChange={ ( evt ) => this.handleInputChange( evt ) }
-                                onFocus={ this.handleInputFocus }
-                                isContentHidden={ false }
+                                errorTooltipClass="error-tooltip full-width"
+                                onlyDefaultValue
                                 value={ email }
+                                onInputChange={ this.notifyChanges }
+                                onFocus={ this.handleInputFocus }
                                 isMissing={ invalidEmail }
+                                refMethod={ ( input ) => { this.email = input; } }
                             />
 
                         </div>
 
                         <SettingsAvatar
-                            imageSource={ uploadedImage }
+                            imageSource={ imagePreview || avatar }
                             onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                             onRemoveImage={ this.removeImage }
                         />
@@ -231,10 +277,16 @@ export default class Settings extends React.Component {
 
                         <div className="user-info-container centered-content">
                             {
-                                error.status &&
-                                <h5 className="login-error full-width">
+                                ( error.status &&
+                                <h5 className="notification-message error full-width">
                                     {error.message}
-                                </h5>
+                                </h5> ) ||
+                                ( showSuccessMessage &&
+                                    <h5
+                                        className="notification-message full-width"
+                                    >
+                                Your changes were successful!
+                                    </h5> )
                             }
 
                             <FormInput
@@ -243,9 +295,12 @@ export default class Settings extends React.Component {
                                 labelText="Current password"
                                 labelClass="login-label settings-label"
                                 inputClass="login-input settings-input"
+                                errorTooltipClass="error-tooltip full-width"
+                                onInputChange={ ( evt ) => this.handleInputChange( evt ) }
+                                onFocus={ this.handleInputFocus }
                                 isContentHidden
-                                value={ password }
-                                disabled
+                                isMissing={ invalidCurrentPassword }
+                                value={ currentPassword }
                             />
                             <FormInput
                                 inputName="newPassword"
@@ -257,8 +312,8 @@ export default class Settings extends React.Component {
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
                                 isContentHidden
-                                value={ newPassword }
                                 isMissing={ invalidNewPassword }
+                                value={ newPassword }
                             />
                             <FormInput
                                 inputName="newRetypedPassword"
@@ -270,8 +325,8 @@ export default class Settings extends React.Component {
                                 onInputChange={ ( evt ) => this.handleInputChange( evt ) }
                                 onFocus={ this.handleInputFocus }
                                 isContentHidden
-                                value={ newRetypedPassword }
                                 isMissing={ invalidNewRetypedPassword }
+                                value={ newRetypedPassword }
                             />
 
                             <button
@@ -294,6 +349,8 @@ Settings.propTypes = {
         user: PropTypes.object.isRequired,
         handleProfileUpdate: PropTypes.func.isRequired,
         handlePasswordChange: PropTypes.func.isRequired,
+        showSuccessMessage: PropTypes.bool.isRequired,
+        hideMessage: PropTypes.func.isRequired,
         error: PropTypes.shape( {
             status: PropTypes.bool.isRequired,
             message: PropTypes.string.isRequired,

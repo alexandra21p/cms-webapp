@@ -1,14 +1,18 @@
+/* eslint jsx-a11y/label-has-for: "off" */
 import React from "react";
 import PropTypes from "prop-types";
-/* eslint jsx-a11y/label-has-for: "off" */
+
 import { capitalize } from "../utils/helperMethods";
 
-const FormInput = ( {
-    onInputChange, className, inputName, labelText, isContentHidden,
-    value, onFocus, isMissing = false, inputClass = "login-input",
-    labelClass = "login-label", errorTooltipClass = "error-tooltip", disabled = false,
+const FormInput = ( { /* eslint complexity: "off" */
+    onInputChange, className, inputName, labelText,
+    value, onFocus, refMethod = null, isMissing = false, inputClass = "login-input",
+    labelClass = "login-label", errorTooltipClass = "error-tooltip",
+    disabled = false, onlyDefaultValue = false, isContentHidden = false,
 } ) => {
-    const defaultOnChangeMethod = () => {};
+    // const defaultOnChangeMethod = null;
+    const [ defaultValue, givenValue ] = onlyDefaultValue ?
+        [ value, undefined ] : [ undefined, value ];
     const formattedText = inputName
         .split( "" )
         .map( char => ( char.toUpperCase() === char ? ` ${ char }` : char ) )
@@ -28,10 +32,12 @@ const FormInput = ( {
                 name={ inputName }
                 type={ isContentHidden ? "password" : "text" }
                 className={ inputClass }
-                onChange={ onInputChange || defaultOnChangeMethod }
-                onFocus={ onFocus || defaultOnChangeMethod }
-                value={ value }
+                onChange={ onInputChange }
+                onFocus={ onFocus }
+                defaultValue={ defaultValue }
+                value={ givenValue }
                 disabled={ disabled }
+                ref={ refMethod }
             />
             <label
                 htmlFor={ inputName }
@@ -44,28 +50,31 @@ const FormInput = ( {
 };
 
 FormInput.propTypes = {
-    onInputChange: PropTypes.func,
+    onInputChange: PropTypes.func.isRequired,
     inputName: PropTypes.string.isRequired,
     className: PropTypes.string.isRequired,
     labelText: PropTypes.string.isRequired,
-    isContentHidden: PropTypes.bool.isRequired,
+    isContentHidden: PropTypes.bool,
     value: PropTypes.string.isRequired,
     isMissing: PropTypes.bool,
-    onFocus: PropTypes.func,
+    onFocus: PropTypes.func.isRequired,
+    refMethod: PropTypes.func,
     inputClass: PropTypes.string,
     labelClass: PropTypes.string,
     disabled: PropTypes.bool,
     errorTooltipClass: PropTypes.string,
+    onlyDefaultValue: PropTypes.bool,
 };
 
 FormInput.defaultProps = {
     inputClass: "login-input",
     labelClass: "login-label",
     errorTooltipClass: "error-tooltip",
-    onInputChange: () => {},
-    onFocus: () => {},
     disabled: false,
     isMissing: false,
+    onlyDefaultValue: false,
+    isContentHidden: false,
+    refMethod: null,
 };
 
 export default FormInput;

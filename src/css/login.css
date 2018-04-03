@@ -209,16 +209,21 @@
     font-weight: 200;
 }
 
-.login-error {
-    background: url(../assets/error.png) 8px 50%/18px no-repeat;
+.notification-message {
+    background: url(../assets/success.png) 8px 50%/18px no-repeat;
     font-size: 1.2rem;
     padding: 10px 10px 10px 35px;
-    background-color: #a82026;
+    background-color: #226654;
     color: #F7F8F8;
     font-weight: 400;
     margin: 0 auto 35px 0;
     border-radius: 5px;
     animation: fade 0.5s;
+}
+
+.error {
+    background: url(../assets/error.png) 8px 50%/18px no-repeat;
+    background-color: #a82026;
 }
 
 @keyframes fade {
@@ -282,6 +287,7 @@
     z-index: 3;
     font-weight: 200;
     letter-spacing: 0.4px;
+    animation: fade 0.3s;
 }
 
 .error-tooltip:after {

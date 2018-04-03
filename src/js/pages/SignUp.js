@@ -116,13 +116,13 @@ export default class SignUp extends React.Component {
             email: invalidEmail, password: invalidPassword, retypePassword: invalidRetypePassword,
             name: invalidName,
         } = validationErrors;
-        const { showSuccessfulRegister, error, hideRedirectMessage } = this.props.options;
+        const { showSuccessMessage, error, hideMessage } = this.props.options;
 
         return (
             <div className="login-page">
                 <div className="register-container">
                     {
-                        showSuccessfulRegister ?
+                        showSuccessMessage ?
                             <div className="redirect-container">
 
                                 <h1 className="redirect-message">
@@ -131,7 +131,7 @@ export default class SignUp extends React.Component {
                                 <button
                                     className="signup-button"
                                     onClick={ () => {
-                                        hideRedirectMessage();
+                                        hideMessage();
                                         this.props.history.replace( "/login" );
                                     } }
                                 >go to login page
@@ -145,7 +145,7 @@ export default class SignUp extends React.Component {
                         <div className="login-form-container">
                             {
                                 error.status ?
-                                    <h5 className="login-error">
+                                    <h5 className="notification-message error">
                                         {error.message}
                                     </h5> :
                                     <h4 className="login-message">
@@ -226,10 +226,10 @@ SignUp.propTypes = {
             status: PropTypes.bool.isRequired,
             message: PropTypes.string.isRequired,
         } ).isRequired,
-        showSuccessfulRegister: PropTypes.bool.isRequired,
+        showSuccessMessage: PropTypes.bool.isRequired,
         handleLocalRegister: PropTypes.func.isRequired,
         handleSocialLogin: PropTypes.func.isRequired,
-        hideRedirectMessage: PropTypes.func.isRequired,
+        hideMessage: PropTypes.func.isRequired,
     } ).isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };

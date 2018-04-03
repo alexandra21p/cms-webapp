@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import Designer from "./pages/Designer";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+
 import Settings from "./pages/Settings";
 import PrivateRoute from "./components/PrivateRoute";
 import { apiPost, apiGet, apiPut } from "./utils/Api";
@@ -24,16 +25,17 @@ class App extends React.Component {
                 message: "",
             },
             user: {},
-            showSuccessfulRegister: false,
+            showSuccessMessage: false,
         };
 
         this.handleLocalLogin = this.handleLocalLogin.bind( this );
         this.handleSocialLogin = this.handleSocialLogin.bind( this );
         this.handleLocalRegister = this.handleLocalRegister.bind( this );
         this.handleLogout = this.handleLogout.bind( this );
-        this.hideRedirectMessage = this.hideRedirectMessage.bind( this );
+        this.hideMessage = this.hideMessage.bind( this );
         this.getUserProfile = this.getUserProfile.bind( this );
         this.handlePasswordChange = this.handlePasswordChange.bind( this );
+        this.handleProfileUpdate = this.handleProfileUpdate.bind( this );
     }
 
     componentWillMount() {
@@ -97,6 +99,7 @@ class App extends React.Component {
                             status: false,
                             message: "",
                         },
+                        showSuccessMessage: false,
                     },
                     () => this.props.history.replace( "/profile" ),
                 );
@@ -108,6 +111,7 @@ class App extends React.Component {
                         status: true,
                         message,
                     },
+                    isAuthenticated: false,
                 } );
             } );
     }
@@ -134,7 +138,7 @@ class App extends React.Component {
         )
             .then( () => {
                 this.setState( {
-                    showSuccessfulRegister: true,
+                    showSuccessMessage: true,
                     error: {
                         status: false,
                         message: "",
@@ -206,6 +210,7 @@ class App extends React.Component {
                             status: false,
                             message: "",
                         },
+                        showSuccessMessage: false,
                     },
                     () => this.props.history.replace( "/profile" ),
                 );
@@ -217,12 +222,13 @@ class App extends React.Component {
                         status: true,
                         message,
                     },
+                    isAuthenticated: false,
                 } );
             } );
     }
 
-    handlePasswordChange( password, retypedPassword, userDetails ) {
-        const differentPasswords = password !== retypedPassword;
+    handlePasswordChange( currentPassword, newPassword, retypedPassword, userDetails ) {
+        const differentPasswords = newPassword !== retypedPassword;
         const message = getError( "different_passwords", errors );
         const {
             email, provider, decryptedToken, decryptedSocialToken,
@@ -244,12 +250,54 @@ class App extends React.Component {
         } : { "x-access-token": decryptedToken };
 
         apiPut(
-            "/api/users/edit",
-            { email, provider, password },
+            "/api/users/editPassword",
+            {
+                email, provider, password: currentPassword, newPassword,
+            },
             headers,
         )
             .then( ( payload ) => {
-                this.setState( { user: payload } );
+                this.setState( { user: payload, showSuccessMessage: true } );
+            } )
+            .catch( ( error ) => {
+                const msg = error.message === "401" ?
+                    "Could not make changes. Check your password."
+                    : getError( error.message, errors );
+                this.setState( {
+                    error: {
+                        status: true,
+                        message: msg,
+                    },
+                } );
+            } );
+    }
+
+    handleProfileUpdate( email, name, avatar, userDetails ) {
+        const {
+            id, provider, decryptedToken, decryptedSocialToken,
+        } = userDetails;
+
+        const headers = decryptedSocialToken ? {
+            "x-access-token": decryptedToken,
+            "access-token": decryptedSocialToken,
+        } : { "x-access-token": decryptedToken };
+
+        apiPut(
+            "/api/users/edit",
+            {
+                profileId: id, provider, email, displayName: name, avatar,
+            },
+            headers,
+        )
+            .then( ( payload ) => {
+                this.setState( {
+                    user: payload,
+                    showSuccessMessage: true,
+                    error: {
+                        status: false,
+                        message: "",
+                    },
+                } );
             } )
             .catch( ( error ) => {
                 const msg = getError( error.message, errors );
@@ -262,34 +310,48 @@ class App extends React.Component {
             } );
     }
 
-    hideRedirectMessage() {
+    hideMessage() {
         this.setState( {
-            showSuccessfulRegister: false,
+            error: {
+                status: false,
+                message: "",
+            },
+            showSuccessMessage: false,
         } );
     }
 
     render() {
         const {
-            isAuthenticated, error, showSuccessfulRegister, user,
+            isAuthenticated, error, showSuccessMessage, user,
         } = this.state;
 
         const options = {
             isAuthenticated,
             error,
-            showSuccessfulRegister,
+            showSuccessMessage,
             handleLocalLogin: this.handleLocalLogin,
             handleSocialLogin: this.handleSocialLogin,
             handleLocalRegister: this.handleLocalRegister,
             handleLogout: this.handleLogout,
-            hideRedirectMessage: this.hideRedirectMessage,
+            hideMessage: this.hideMessage,
             getUserProfile: this.getUserProfile,
             handlePasswordChange: this.handlePasswordChange,
+            handleProfileUpdate: this.handleProfileUpdate,
             user,
         };
 
         return (
             <Switch>
-                <Route exact path="/" component={ Home } />
+                <Route
+                    exact
+                    path="/"
+                    render={ props => ( (
+                        <Home
+                            { ...props }
+                            options={ options }
+                        /> ) ) }
+                />
+
                 <Route
                     path="/login"
                     render={ props => ( (

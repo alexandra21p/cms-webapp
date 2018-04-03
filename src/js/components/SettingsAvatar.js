@@ -2,12 +2,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { defaultAvatar } from "../utils/helperMethods";
+// import { defaultAvatar } from "../utils/helperMethods";
 
 const SettingsAvatar = ( { imageSource, onInputChange, onRemoveImage } ) => (
     <div className="update-avatar-container">
         <img
-            src={ imageSource || defaultAvatar }
+            src={ imageSource }
             alt="avatar"
             className="settings-avatar"
         />

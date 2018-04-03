@@ -26,6 +26,7 @@ export default class Login extends React.Component {
         this.handleInputFocus = this.handleInputFocus.bind( this );
         this.handleFacebookClick = this.handleFacebookClick.bind( this );
         this.handleLogin = this.handleLogin.bind( this );
+        this.goToSignupPage = this.goToSignupPage.bind( this );
 
         this.accessToken = "";
     }
@@ -90,6 +91,12 @@ export default class Login extends React.Component {
         }
     }
 
+    goToSignupPage() {
+        const { hideMessage } = this.props.options;
+        hideMessage();
+        this.props.history.replace( "/signup" );
+    }
+
     render() {
         const {
             validationErrors, email, password,
@@ -106,7 +113,7 @@ export default class Login extends React.Component {
                         <div className="login-form-container">
                             {
                                 error.status ?
-                                    <h5 className="login-error">
+                                    <h5 className="notification-message error">
                                         {error.message}
                                     </h5> :
                                     <h4 className="login-message">
@@ -157,7 +164,7 @@ export default class Login extends React.Component {
                         </h3>
                         <button
                             className="signup-button"
-                            onClick={ () => this.props.history.replace( "/signup" ) }
+                            onClick={ this.goToSignupPage }
                         >sign up
                         </button>
                     </div>
@@ -176,6 +183,7 @@ Login.propTypes = {
         } ).isRequired,
         handleLocalLogin: PropTypes.func.isRequired,
         handleSocialLogin: PropTypes.func.isRequired,
+        hideMessage: PropTypes.func.isRequired,
     } ).isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };

@@ -51,7 +51,6 @@ const decryptAppTokens = () => {
     const decryptedSocialToken = socialAuthToken ?
         decryptToken( socialAuthToken, id, reversedId ) : "";
 
-    console.log( "THE TOKEN", token );
     return {
         id, provider, decryptedToken, decryptedSocialToken, email,
     };

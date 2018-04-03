@@ -36,6 +36,7 @@
     "friendly-errors-webpack-plugin": "^1.6.1",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
+    "nodemon": "^1.17.3",
     "style-loader": "^0.20.3",
     "webpack": "^3.8.1",
     "webpack-bundle-analyzer": "^2.9.1",
@@ -43,7 +44,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=development&webpack --progress",
-    "start-server": "NODE_ENV=development&node server.js",
+    "start-server": "NODE_ENV=development nodemon node server.js",
     "dev": "webpack-dev-server --content-base dist --progress --colors --inline --hot",
     "linter": "eslint src",
     "test": "NODE_ENV=test jest --no-cache",
