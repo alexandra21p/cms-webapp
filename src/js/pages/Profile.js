@@ -41,7 +41,7 @@ export default class Profile extends React.Component {
                 </h2>
                 <Link
                     className="profile-navigation-button"
-                    to="/profile/nested"
+                    to="/designer"
                 >
                 Create a new site
                 </Link>

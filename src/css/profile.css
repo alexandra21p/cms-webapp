@@ -43,11 +43,13 @@ aside.sidebar {
 }
 
 .avatar {
-    max-width: 100px;
-    height: 100px;
+    width: 135px;
+    height: 135px;
     margin: 50px auto 10px;
     display: block;
     border-radius: 50%;
+    padding: 11px;
+    box-shadow: 3px -1px 1px #fb9a88, inset 1px -1px 1px rgba(255, 255, 255, .167969);
 }
 
 .profile-email {

@@ -1,0 +1,89 @@
+.designer-page {
+    min-height: 100vh;
+}
+
+.designer-welcome-box {
+    position: fixed;
+    width: 70%;
+    height: 200px;
+    background-color: rgba(249, 174, 164, .9);
+    /*top: 50%;
+    bottom: 50%;*/
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    opacity: 1;
+    z-index: 11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    outline: 1px solid rgba(249, 174, 164, .25);
+    outline-offset: 10px;
+    transform: translateY(-50%);
+    animation: slide-in .35s forwards;
+}
+
+.slide-out {
+    transform: translateY(-300%);
+    animation: slide-out .35s forwards;
+    /*top: -10px;*/
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-text {
+    font-size: 2.6rem;
+    font-weight: 200;
+    text-align: center;
+    line-height: 32px;
+}
+
+.designer-modal-subtitle {
+    color: rgb(88, 75, 79);
+    font-weight: 100;
+    font-size: 2.3rem;
+}
+
+
+.hidden-modal-container {
+    display: none;
+    animation: hide .6s forwards;
+}
+
+@keyframes slide-in {
+  0%   { transform: translateY(-300%); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes slide-out {
+  0%   { transform: translateY(-50%); }
+  100% { transform: translateY(-300%); }
+}
+
+@keyframes hide {
+  0%   { display: flex; }
+  100% { display: none; }
+}
+
+.confirm-button {
+    border: none;
+    padding: 15px 35px;
+    background-color: #252434;
+    font-size: 1.5rem;
+    font-weight: 300;
+    display: block;
+    color: #f9aea4;
+    border-radius: 3px;
+    transition: background-color .4s linear;
+    letter-spacing: .5px;
+}
+
+.confirm-button:hover {
+    background-color: #18483b;
+    color: #f7f8f8;
+}
