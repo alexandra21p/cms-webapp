@@ -1,0 +1,108 @@
+@import 'variables';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+html {
+  height: 100%;
+  font-size: 62.5%;
+}
+
+body {
+  font-family: $font-stack;
+  background-color: $primary-color;
+  height: 100%;
+}
+
+.app {
+    height: 100%;
+}
+
+.home-container {
+    height: 100%;
+}
+
+.home-container div:first-child {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+.home-content {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+}
+
+h1 {
+  font-family: $font-stack;
+  color: $secondary-color-complement;
+  font-size: 4.3rem;
+  text-align: right;
+  font-weight: 300;
+  margin-right: 40px;
+}
+
+h3 {
+  color: $quaternary-color;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+button {
+    cursor: pointer;
+    outline: none;
+    font-family: $font-stack;
+}
+
+span.colored-text {
+    color: #EDBBB0;
+    font-weight: 100;
+}
+
+.home-title {
+    margin: 0;
+    position: absolute;
+    right: 40px;
+    top: 10%;
+    z-index: 10;
+}
+
+a.get-started {
+  font-family: 'Julius Sans One', sans-serif;
+  display: block;
+  border: 1px solid #EDBBB0;
+  color: #EDBBB0;
+  padding: 15px 20px;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 1.3rem;
+  width: 15%;
+  text-align: center;
+  transition: background-color linear 0.2s;
+  border-radius: 1px;
+  /* text-transform: uppercase; */
+}
+
+.separator {
+  position: absolute;
+  top: 30%;
+  padding: 50px 0 50px 100px;
+  background: $secondary-color-complement;
+  height: 35vh;
+  width: 100%;
+  background: -webkit-linear-gradient(right, $secondary-color-complement, #EDBBB0);
+  background: -moz-linear-gradient(to right, $secondary-color-complement, #EDBBB0);
+  background: linear-gradient(to right, $secondary-color-complement, $secondary-color); /* #c28a7d, #af7978 */
+}
+
+a.get-started:hover {
+  background-color: $secondary-color;
+  color:  $secondary-color-complement;
+  border-color: #EDBBB0;
+}

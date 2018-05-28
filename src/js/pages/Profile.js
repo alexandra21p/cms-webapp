@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { decryptAppTokens } from "../utils/helperMethods";
-import "../../css/profile.css";
+import "../../css/profile.scss";
 
 export default class Profile extends React.Component {
     constructor() {
@@ -37,7 +37,7 @@ export default class Profile extends React.Component {
         return (
             <div className="empty-container">
                 <h2 className="no-websites-message">
-                You haven&apos;t created any websites yet. Let&apos;s change that.
+                You haven&apos;t created any websites yet. <br /> Let&apos;s change that.
                 </h2>
                 <Link
                     className="profile-navigation-button"

@@ -1,11 +1,14 @@
+@import 'variables';
+
 .settings-page {
     background-color: #dadbdb;
-    /* height: 100vh; */
+    height: 100%;
+    overflow: auto;
 }
 
 header.settings-header {
-    background-color: #f9aea4;
-    border-bottom: 1px solid #f9aea4;
+    background-color: $secondary-color;
+    border-bottom: 1px solid $secondary-color;
     box-shadow: 0 3px 10px 0 rgba(82, 82, 82, 0.3);
     height: 11vh;
     position: fixed;
@@ -20,11 +23,11 @@ header.settings-header {
 }
 
 .user-icon {
-    height: 50px;
-    width: 50px;
+    height: 45px;
+    width: 45px;
     border-radius: 50%;
-    padding: 5px;
-    box-shadow: 3px -1px 1px #226654, inset 1px -1px 1px #fb9a88;
+    padding: 4px;
+    box-shadow: 3px -1px 1px $tertiary-color, inset 1px -1px 1px $secondary-color-darker;
 }
 
 .header-user-info span {
@@ -34,10 +37,10 @@ header.settings-header {
 
 
 button.back-button {
-    background-color: #f9aea4;
+    background-color: $secondary-color;
     background: url(../assets/back-arrow.png) 12px/14px no-repeat;
-    border: 1px solid #252434;
-    color: #252434;
+    border: 1px solid $primary-color;
+    color: $primary-color;
     padding: 10px 15px 8.4px 28px;
     font-size: 1.2rem;
     margin-left: 30px;
@@ -48,26 +51,28 @@ button.back-button {
 
 button.back-button:hover {
     background: url(../assets/back-arrow-pink.png) 10px/16px no-repeat;
-    background-color: #252434;
-    border: 1px solid #252434;
-    color: #f9aea4;
+    background-color: $primary-color;
+    border: 1px solid $primary-color;
+    color: $secondary-color;
 }
 
 .settings-container {
     /* background-color: rgba(0, 0, 0, .117188); */
-    height: 100%;
-    width: 60%;
-    padding: 100px 0 100px;
+    min-height: 100%;
+    width: 70%;
+    padding: 60px 0 50px;
     margin: auto;
     position: relative;
 }
 
 .settings-title {
+    flex-basis: 100%;
     margin: 70px 0;
     border-bottom: 5px solid;
     padding: 0 0 5px;
     border-image: linear-gradient(to right, #edbbb0 0%, rgb(88, 75, 79) 60%, rgba(249, 174, 164, .25) 100%);
     border-image-slice: 1;
+    font-size: 2.8rem;
 }
 
 .special-text {
@@ -80,7 +85,7 @@ button.back-button:hover {
     flex-wrap: wrap;
     flex-direction: column;
     padding: 20px 50px 55px;
-    background-color: #f7f8f8;
+    background-color: $quaternary-color;
     border-radius: 3px;
     margin-bottom: 30px;
 }
@@ -91,17 +96,15 @@ button.back-button:hover {
 
 .settings-subtitle {
     flex-basis: 100%;
-    color: #fb9a88;
+    color: $secondary-color-darker;
     font-weight: 300;
-    font-size: 2.2rem;
+    font-size: 1.9rem;
     margin: 8px 0 60px;
     padding-bottom: 7px;
     border-bottom: 1px solid rgba(0, 0, 0, .117188);
 }
 
 .user-info-container {
-    flex-basis: 70%;
-    padding-right: 65px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -116,10 +119,11 @@ button.back-button:hover {
 }
 
 .settings-input {
+    font-size: 1.2rem;
     width: 100%;
     animation: none;
     padding: 11px 3px 3px 2px;
-    color: #fb9a88;
+    color: $secondary-color-darker;
     font-weight: 600;
     letter-spacing: .6px;
 }
@@ -133,7 +137,7 @@ button.back-button:hover {
     animation: none;
 }
 .settings-label {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     animation: bigger-font-settings 0.5s;
 }
 
@@ -161,13 +165,13 @@ button.back-button:hover {
 }
 
 .settings-avatar {
-    max-width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     display: block;
     border-radius: 50%;
     margin: 0 0 20px;
-    padding: 13px;
-    box-shadow: 3px -1px 1px #226654, inset 1px -1px 1px #fb9a88;
+    padding: 6px;
+    box-shadow: 3px -1px 1px $tertiary-color, inset 1px -1px 1px $secondary-color-darker;
 }
 
 .file-upload {
@@ -184,15 +188,15 @@ button.back-button:hover {
     padding: 13px 15px;
     border: 1px solid;
     border-radius: 5px;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 200;
-    background-color: #226654;
+    background-color: $tertiary-color;
     color: #f6f7f9;
     transition: background-color .4s linear;
 }
 
 .file-upload + .upload-button:hover {
-    background-color: #18483b;
+    background-color: $tertiary-color-darker;
 }
 
 .remove-image-button {
@@ -205,17 +209,18 @@ button.back-button:hover {
 }
 
 .save-button {
-    padding: 13px 18px;
-    background-color: #fb9a88;
-    margin-top: 30px;
+    text-transform: uppercase;
+    font-size: 1rem;
+    padding: 10px 23px;
+    background-color: $secondary-color-darker;
+    margin: 30px auto 0;
     border-radius: 3px;
-    color: #252434;
-    background: -webkit-linear-gradient(right, #fb9a88, #f9aea4);
-    background: -moz-linear-gradient(to right,  #fb9a88, #f9aea4);
-    background: linear-gradient(to right, #fb9a88, #f9aea4);
+    color: $primary-color;
+    background: -webkit-linear-gradient(right, $secondary-color-darker, $secondary-color);
+    background: -moz-linear-gradient(to right,  $secondary-color-darker, $secondary-color);
+    background: linear-gradient(to right, $secondary-color-darker, $secondary-color);
     transition: background .4s linear;
     border: 1px solid rgba(0, 0, 0, .117188);
-    margin-right: auto;
 }
 
 .save-button:hover {
@@ -241,7 +246,7 @@ button.back-button:hover {
     margin: auto;
     padding: 25px 30px;
     border-radius: 3px;
-    background-color: #f9aea4;
+    background-color: $secondary-color;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -259,13 +264,13 @@ button.back-button:hover {
 
 .modal-subtitle {
     font-size: 1.55rem;
-    color: #f7f8f8;
+    color: $quaternary-color;
     font-weight: 400;
     margin-bottom: 35px;
 }
 
 .modal-button {
-    background-color: #252434;
+    background-color: $primary-color;
     padding: 10px 15px;
     width: 100px;
     font-size: 1.1rem;

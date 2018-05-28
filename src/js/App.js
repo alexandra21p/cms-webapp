@@ -39,6 +39,7 @@ class App extends React.Component {
     }
 
     componentWillMount() {
+        console.log( "i should call api for user data if logged in" );
         const authToken = localStorage.getItem( "auth" );
         const user = JSON.parse( localStorage.getItem( "userDetails" ) );
 

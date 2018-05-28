@@ -2,7 +2,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import "../../css/login.css";
+import "../../css/login.scss";
 
 import FormInput from "../components/FormInput";
 import SocialLogin from "../components/SocialLogin";

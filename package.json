@@ -11,6 +11,7 @@
     "react-dom": "^16.0.0",
     "react-facebook-login": "^4.0.1",
     "react-google-login": "^3.0.10",
+    "react-particles-js": "^2.1.2",
     "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
@@ -36,15 +37,17 @@
     "friendly-errors-webpack-plugin": "^1.6.1",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
+    "node-sass": "^4.9.0",
     "nodemon": "^1.17.3",
+    "sass-loader": "^7.0.1",
     "style-loader": "^0.20.3",
     "webpack": "^3.8.1",
     "webpack-bundle-analyzer": "^2.9.1",
     "webpack-dev-server": "^2.9.5"
   },
   "scripts": {
-    "build": "NODE_ENV=development&webpack --progress",
-    "start-server": "NODE_ENV=development nodemon node server.js",
+    "build": "SET NODE_ENV=development&webpack --progress",
+    "start-server": "SET NODE_ENV=development&nodemon node server.js",
     "dev": "webpack-dev-server --content-base dist --progress --colors --inline --hot",
     "linter": "eslint src",
     "test": "NODE_ENV=test jest --no-cache",

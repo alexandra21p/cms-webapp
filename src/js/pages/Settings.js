@@ -1,8 +1,8 @@
 /* eslint jsx-a11y/label-has-for: "off" */
 import React from "react";
 import PropTypes from "prop-types";
-import "../../css/settings.css";
-import "../../css/responsive.css";
+import "../../css/settings.scss";
+import "../../css/responsive.scss";
 
 import FormInput from "../components/FormInput";
 import Modal from "../components/Modal";

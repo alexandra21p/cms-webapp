@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "../../css/designer.css";
+import "../../css/designer.scss";
 
 export default class Designer extends React.Component {
     constructor() {

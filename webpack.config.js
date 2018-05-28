@@ -51,11 +51,11 @@ module.exports = {
                 loader: "babel-loader",
             },
             {
-                test: /\.css$/,
+                test: /\.scss$/,
                 exclude: /node_modules/,
                 use: ExtractTextPlugin.extract( {
                     fallback: "style-loader",
-                    use: "css-loader?url=false",
+                    use: "css-loader?url=false!sass-loader",
                 } ),
             },
         ],

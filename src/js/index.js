@@ -2,8 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import "../css/main.css";
-import "../css/responsive.css";
+import "../css/main.scss";
+import "../css/responsive.scss";
 
 const appContainer = document.querySelector( ".app" );
 

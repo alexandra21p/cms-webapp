@@ -1,17 +1,18 @@
+@import 'variables';
+
 .designer-page {
-    min-height: 100vh;
+    min-height: 100%;
 }
 
 .designer-welcome-box {
     position: fixed;
-    width: 70%;
+    width: 60%;
     height: 200px;
     background-color: rgba(249, 174, 164, .9);
-    /*top: 50%;
-    bottom: 50%;*/
     right: 0;
     left: 0;
     margin: 0 auto;
+    padding: 10px 20px;
     opacity: 1;
     z-index: 11;
     display: flex;
@@ -27,7 +28,6 @@
 .slide-out {
     transform: translateY(-300%);
     animation: slide-out .35s forwards;
-    /*top: -10px;*/
 }
 
 .flex {
@@ -37,18 +37,17 @@
 }
 
 .modal-text {
-    font-size: 2.6rem;
-    font-weight: 200;
+    font-size: 1.6rem;
+    font-weight: 400;
     text-align: center;
-    line-height: 32px;
+    line-height: 20px;
 }
 
 .designer-modal-subtitle {
     color: rgb(88, 75, 79);
-    font-weight: 100;
-    font-size: 2.3rem;
+    font-weight: 200;
+    font-size: 1.2rem;
 }
-
 
 .hidden-modal-container {
     display: none;
@@ -72,18 +71,18 @@
 
 .confirm-button {
     border: none;
-    padding: 15px 35px;
-    background-color: #252434;
-    font-size: 1.5rem;
+    padding: 10px 25px;
+    background-color: $primary-color;
+    font-size: 1rem;
     font-weight: 300;
     display: block;
-    color: #f9aea4;
+    color: $secondary-color;
     border-radius: 3px;
     transition: background-color .4s linear;
     letter-spacing: .5px;
 }
 
 .confirm-button:hover {
-    background-color: #18483b;
-    color: #f7f8f8;
+    background-color: $tertiary-color-darker;
+    color: $quaternary-color;
 }
