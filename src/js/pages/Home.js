@@ -2,10 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Particles from "react-particles-js";
+import { connect } from "react-redux";
 
 import particlesConfig from "../utils/particlesConfig";
+import * as messageActions from "../redux/actions/messageActions";
 
-const Home = ( { options: { hideMessage } } ) => (
+const Home = ( { hideMessage } ) => (
     <div className="home-container">
         <Particles
             params={ particlesConfig }
@@ -21,10 +23,12 @@ const Home = ( { options: { hideMessage } } ) => (
     </div>
 );
 
-export default Home;
-
 Home.propTypes = {
-    options: PropTypes.shape( {
-        hideMessage: PropTypes.func.isRequired,
-    } ).isRequired,
+    hideMessage: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = ( dispatch ) => ( {
+    hideMessage: () => dispatch( messageActions.hideMessage() ),
+} );
+
+export default connect( null, mapDispatchToProps )( Home );

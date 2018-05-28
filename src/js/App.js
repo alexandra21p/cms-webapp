@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Switch, Route, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -11,49 +12,36 @@ import SignUp from "./pages/SignUp";
 import Settings from "./pages/Settings";
 import PrivateRoute from "./components/PrivateRoute";
 import { apiPost, apiGet, apiPut } from "./utils/Api";
+import * as userActions from "./redux/actions/userActions";
 import { errors } from "./utils/errors";
-import { getError, encryptToken } from "./utils/helperMethods";
+import { getError, encryptToken, decryptAppTokens } from "./utils/helperMethods";
 
 class App extends React.Component {
     constructor() {
         super();
 
         this.state = {
-            isAuthenticated: false,
-            error: {
-                status: false,
-                message: "",
-            },
-            user: {},
-            showSuccessMessage: false,
         };
 
-        this.handleLocalLogin = this.handleLocalLogin.bind( this );
         this.handleSocialLogin = this.handleSocialLogin.bind( this );
         this.handleLocalRegister = this.handleLocalRegister.bind( this );
         this.handleLogout = this.handleLogout.bind( this );
-        this.hideMessage = this.hideMessage.bind( this );
         this.getUserProfile = this.getUserProfile.bind( this );
         this.handlePasswordChange = this.handlePasswordChange.bind( this );
         this.handleProfileUpdate = this.handleProfileUpdate.bind( this );
     }
 
     componentWillMount() {
-        console.log( "i should call api for user data if logged in" );
         const authToken = localStorage.getItem( "auth" );
         const user = JSON.parse( localStorage.getItem( "userDetails" ) );
 
         if ( !authToken && !user ) {
-            this.setState( { isAuthenticated: false } );
-            return;
-        }
-        const { provider } = user;
-        if ( provider === "local" ) {
-            this.setState( { isAuthenticated: true } );
+            this.props.loadLoggedUserFailure();
             return;
         }
 
-        this.setState( { isAuthenticated: true } );
+        const userData = decryptAppTokens();
+        this.props.getUserProfile( userData );
     }
 
     getUserProfile( id, provider, authToken, socialAuthToken ) {
@@ -71,49 +59,6 @@ class App extends React.Component {
             } )
             .catch( ( error ) => {
                 console.log( error );
-            } );
-    }
-
-    handleLocalLogin( email, password, provider ) {
-        apiPost(
-            "/api/users/login",
-            { email, password, provider },
-        )
-            .then( payload => {
-                const { token, user: { providers } } = payload;
-                const { profileId: id } = providers.find( prov =>
-                    prov.email === email && prov.type === provider );
-
-                const reversedId = id.split( "" ).reverse().join( "" );
-                const encryptedToken = encryptToken( token, id, reversedId );
-
-                localStorage.setItem( "auth", encryptedToken );
-                localStorage.setItem(
-                    "userDetails",
-                    JSON.stringify( { id, email, provider: "local" } ),
-                );
-
-                this.setState(
-                    {
-                        isAuthenticated: true,
-                        error: {
-                            status: false,
-                            message: "",
-                        },
-                        showSuccessMessage: false,
-                    },
-                    () => this.props.history.replace( "/profile" ),
-                );
-            } )
-            .catch( ( error ) => {
-                const message = getError( error.message, errors );
-                this.setState( {
-                    error: {
-                        status: true,
-                        message,
-                    },
-                    isAuthenticated: false,
-                } );
             } );
     }
 
@@ -311,34 +256,16 @@ class App extends React.Component {
             } );
     }
 
-    hideMessage() {
-        this.setState( {
-            error: {
-                status: false,
-                message: "",
-            },
-            showSuccessMessage: false,
-        } );
-    }
-
     render() {
-        const {
-            isAuthenticated, error, showSuccessMessage, user,
-        } = this.state;
-
         const options = {
-            isAuthenticated,
-            error,
-            showSuccessMessage,
-            handleLocalLogin: this.handleLocalLogin,
+            isAuthenticated: this.props.isAuthenticated,
+            error: this.props.error,
             handleSocialLogin: this.handleSocialLogin,
             handleLocalRegister: this.handleLocalRegister,
             handleLogout: this.handleLogout,
-            hideMessage: this.hideMessage,
             getUserProfile: this.getUserProfile,
             handlePasswordChange: this.handlePasswordChange,
             handleProfileUpdate: this.handleProfileUpdate,
-            user,
         };
 
         return (
@@ -379,6 +306,21 @@ class App extends React.Component {
 
 App.propTypes = {
     history: PropTypes.object.isRequired, // eslint-disable-line
+    getUserProfile: PropTypes.func.isRequired,
+    loadLoggedUserFailure: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool.isRequired,
+    error: PropTypes.object.isRequired,
+
 };
 
-export default withRouter( App );
+const mapStateToProps = ( state ) => ( {
+    isAuthenticated: state.user.isAuthenticated,
+    error: state.messages.error,
+} );
+
+const mapDispatchToProps = dispatch => ( {
+    getUserProfile: userData => dispatch( userActions.getUserProfile( userData ) ),
+    loadLoggedUserFailure: () => dispatch( userActions.loadLoggedUserFailure() ),
+} );
+
+export default withRouter( connect( mapStateToProps, mapDispatchToProps )( App ) );

@@ -1,13 +1,13 @@
 /* eslint jsx-a11y/label-has-for: "off" */
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 import "../../css/login.scss";
-
 import FormInput from "../components/FormInput";
 import SocialLogin from "../components/SocialLogin";
 
-export default class SignUp extends React.Component {
+class SignUp extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -116,7 +116,8 @@ export default class SignUp extends React.Component {
             email: invalidEmail, password: invalidPassword, retypePassword: invalidRetypePassword,
             name: invalidName,
         } = validationErrors;
-        const { showSuccessMessage, error, hideMessage } = this.props.options;
+        const { error, hideMessage } = this.props.options;
+        const { showSuccessMessage } = this.props;
 
         return (
             <div className="login-page">
@@ -226,10 +227,16 @@ SignUp.propTypes = {
             status: PropTypes.bool.isRequired,
             message: PropTypes.string.isRequired,
         } ).isRequired,
-        showSuccessMessage: PropTypes.bool.isRequired,
         handleLocalRegister: PropTypes.func.isRequired,
         handleSocialLogin: PropTypes.func.isRequired,
         hideMessage: PropTypes.func.isRequired,
     } ).isRequired,
+    showSuccessMessage: PropTypes.bool.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
+
+const mapStateToProps = ( state ) => ( {
+    showSuccessMessage: state.message.showSuccessMessage,
+} );
+
+export default connect( mapStateToProps )( SignUp );

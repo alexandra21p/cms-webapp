@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import { decryptAppTokens } from "../utils/helperMethods";
 import "../../css/profile.scss";
 
-export default class Profile extends React.Component {
+class Profile extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -12,15 +13,6 @@ export default class Profile extends React.Component {
         };
 
         this.handleLogout = this.handleLogout.bind( this );
-    }
-
-    componentDidMount() {
-        const { getUserProfile } = this.props.options;
-        const {
-            id, provider, decryptedToken, decryptedSocialToken,
-        } = decryptAppTokens();
-
-        getUserProfile( id, provider, decryptedToken, decryptedSocialToken );
     }
 
     handleLogout() {
@@ -50,7 +42,7 @@ export default class Profile extends React.Component {
     }
 
     render() {
-        const { user: { avatar, displayName } } = this.props.options;
+        const { user: { avatar, displayName } } = this.props;
         const { email } = JSON.parse( localStorage.getItem( "userDetails" ) );
 
         return (
@@ -87,9 +79,14 @@ export default class Profile extends React.Component {
 
 Profile.propTypes = {
     options: PropTypes.shape( {
-        getUserProfile: PropTypes.func.isRequired,
-        user: PropTypes.object.isRequired,
         handleLogout: PropTypes.func.isRequired,
     } ).isRequired,
+    user: PropTypes.shape.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
+
+const mapStateToProps = ( state ) => ( {
+    user: state.user.userData,
+} );
+
+export default connect( mapStateToProps )( Profile );

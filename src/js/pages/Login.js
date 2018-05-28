@@ -1,12 +1,15 @@
 /* eslint jsx-a11y/label-has-for: "off" */
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
 import "../../css/login.scss";
 import FormInput from "../components/FormInput";
-
 import SocialLogin from "../components/SocialLogin";
+import * as userActions from "../redux/actions/userActions";
+import * as messageActions from "../redux/actions/messageActions";
 
-export default class Login extends React.Component {
+class Login extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -55,7 +58,6 @@ export default class Login extends React.Component {
 
     handleLogin() {
         const { email, password } = this.state;
-        const { handleLocalLogin } = this.props.options;
         const invalidEmail = email === "";
         const invalidPassword = password === "";
         if ( invalidPassword || invalidEmail ) {
@@ -68,7 +70,12 @@ export default class Login extends React.Component {
             return;
         }
 
-        handleLocalLogin( email, password, "local" );
+        this.props.loginUserLocal( {
+            email, password, provider: "local",
+        } )
+            .then( () => {
+                this.props.history.replace( "/profile" );
+            } );
     }
 
     socialLoginResponse( response, providerType ) {
@@ -92,8 +99,7 @@ export default class Login extends React.Component {
     }
 
     goToSignupPage() {
-        const { hideMessage } = this.props.options;
-        hideMessage();
+        this.props.hideMessage();
         this.props.history.replace( "/signup" );
     }
 
@@ -102,7 +108,7 @@ export default class Login extends React.Component {
             validationErrors, email, password,
         } = this.state;
         const { email: invalidEmail, password: invalidPassword } = validationErrors;
-        const { error } = this.props.options;
+        const { error } = this.props;
 
         return (
             <div className="login-page">
@@ -177,13 +183,23 @@ export default class Login extends React.Component {
 
 Login.propTypes = {
     options: PropTypes.shape( {
-        error: PropTypes.shape( {
-            status: PropTypes.bool.isRequired,
-            message: PropTypes.string.isRequired,
-        } ).isRequired,
-        handleLocalLogin: PropTypes.func.isRequired,
         handleSocialLogin: PropTypes.func.isRequired,
-        hideMessage: PropTypes.func.isRequired,
     } ).isRequired,
+    loginUserLocal: PropTypes.func.isRequired,
+    error: PropTypes.shape( {
+        status: PropTypes.bool.isRequired,
+        message: PropTypes.string.isRequired,
+    } ).isRequired,
+    hideMessage: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
+
+const mapStateToProps = ( state ) => ( {
+    error: state.messages.error,
+} );
+const mapDispatchToProps = ( dispatch ) => ( {
+    loginUserLocal: loginData => dispatch( userActions.loginUserLocal( loginData ) ),
+    hideMessage: () => dispatch( messageActions.hideMessage() ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( Login );
