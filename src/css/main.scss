@@ -61,48 +61,77 @@ button {
 }
 
 span.colored-text {
-    color: #EDBBB0;
+    color: $secondary-color;
     font-weight: 100;
+    font-size: 7rem;
 }
 
 .home-title {
-    margin: 0;
-    position: absolute;
-    right: 40px;
-    top: 10%;
-    z-index: 10;
+  margin: 0;
+  position: absolute;
+  right: 150px;
+  top: 35%;
+  z-index: 10;
+  left: 10px;
+  line-height: 45px;
+  font-weight: 400;
+  font-size: 7.5rem;
 }
 
 a.get-started {
   font-family: 'Julius Sans One', sans-serif;
   display: block;
-  border: 1px solid #EDBBB0;
-  color: #EDBBB0;
-  padding: 15px 20px;
+  color: $secondary-color;
+  padding: 5px 0;
   text-decoration: none;
   margin: 20px 0;
-  font-size: 1.3rem;
-  width: 15%;
-  text-align: center;
-  transition: background-color linear 0.2s;
+  font-size: 1.5rem;
+  width: 10%;
+  transition: all linear 0.2s;
   border-radius: 1px;
+  position: absolute;
   /* text-transform: uppercase; */
+}
+
+a.get-started:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 3px solid $secondary-color;
+    transition: 0.4s;
+}
+
+a.get-started:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    border-bottom: 3px solid $quaternary-color;
+    transition: 0.4s;
+}
+
+a.get-started:hover {
+  color: $quaternary-color;
+}
+
+a.get-started:hover:after {
+  width: 100%;
 }
 
 .separator {
   position: absolute;
-  top: 30%;
-  padding: 50px 0 50px 100px;
-  background: $secondary-color-complement;
-  height: 35vh;
-  width: 100%;
-  background: -webkit-linear-gradient(right, $secondary-color-complement, #EDBBB0);
-  background: -moz-linear-gradient(to right, $secondary-color-complement, #EDBBB0);
-  background: linear-gradient(to right, $secondary-color-complement, $secondary-color); /* #c28a7d, #af7978 */
-}
-
-a.get-started:hover {
-  background-color: $secondary-color;
-  color:  $secondary-color-complement;
-  border-color: #EDBBB0;
+  top: 50%;
+  bottom: 50%;
+  margin: auto;
+  left: 100px;
+  // padding: 50px 0 50px 100px;
+  background: $secondary-color;
+  height: 45vh;
+  width: 450px;
+  // background: -webkit-linear-gradient(right, $secondary-color-complement, #EDBBB0);
+  // background: -moz-linear-gradient(to right, $secondary-color-complement, #EDBBB0);
+  // background: linear-gradient(to right, $secondary-color-complement, $secondary-color); /* #c28a7d, #af7978 */
 }

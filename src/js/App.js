@@ -16,6 +16,7 @@ import * as userActions from "./redux/actions/userActions";
 import { errors } from "./utils/errors";
 import { getError, encryptToken, decryptAppTokens } from "./utils/helperMethods";
 
+/* eslint react/no-unused-state: "off" */
 class App extends React.Component {
     constructor() {
         super();
@@ -309,7 +310,7 @@ App.propTypes = {
     getUserProfile: PropTypes.func.isRequired,
     loadLoggedUserFailure: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool.isRequired,
-    error: PropTypes.object.isRequired,
+    error: PropTypes.object.isRequired, // eslint-disable-line
 
 };
 

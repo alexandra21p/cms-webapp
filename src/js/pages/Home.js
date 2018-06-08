@@ -15,10 +15,8 @@ const Home = ( { hideMessage } ) => (
         <h1 className="home-title">Creating websites should be<br />
             <span className="colored-text"> fast and easy</span>
         </h1>
-        <div className="separator">
-            <h3>So let us take care of it for you.</h3>
-            <Link to="/login" className="get-started" onClick={ hideMessage }>Get Started</Link>
-        </div>
+        <div className="separator" />
+        <Link to="/login" className="get-started" onClick={ hideMessage }>Get Started</Link>
 
     </div>
 );
