@@ -21,6 +21,12 @@
     .profile-welcome-message {
         font-size: 1.7rem;
     }
+
+    h1.home-title {
+      line-height: 29px;
+      padding: 0 30px 0 0;
+      left: 10%;
+    }
 }
 
 @media only screen and (min-width: 900px ) {
@@ -69,9 +75,34 @@
         font-size: 1.2rem;
         padding: 13px 30px;
     }
+
+    h1.home-title {
+      line-height: 33px;
+    }
 }
 
 @media only screen and (min-width: 1100px ) {
+    h1.home-title {
+      line-height: 43px;
+    }
+    .home-container .middle-container > .circle {
+      width: 130px;
+      height: 130px;
+    }
+    .home-container .middle-container > .circle:hover {
+      background-position: 65px;
+    }
+    .middle-container .circle > span.colored-text {
+      font-size: 9rem;
+      line-height: 23px;
+      bottom: 15px;
+      justify-content: space-evenly;
+    }
+    span.colored-text .cross-text {
+      font-size: 8rem;
+      width: 30px;
+      height: 1px;
+    }
     .settings-container {
         width: 70%;
     }
@@ -97,6 +128,12 @@
         padding: 10px;
     }
 
+}
+
+@media only screen and (min-width: 1300px) {
+  .home-content h1.home-title {
+    line-height: 50px;
+  }
 }
 
 @media only screen and (min-width: 1450px ) {

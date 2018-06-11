@@ -1,10 +1,10 @@
 const particlesConfig = {
     particles: {
         number: {
-            value: 50,
+            value: 400,
             density: {
                 enable: true,
-                value_area: 900,
+                value_area: 1000,
             },
         },
         color: {
@@ -31,7 +31,7 @@ const particlesConfig = {
             },
         },
         size: {
-            value: 3,
+            value: 1,
             random: true,
             anim: {
                 enable: true,
@@ -42,14 +42,14 @@ const particlesConfig = {
         },
         line_linked: {
             enable: true,
-            distance: 200,
+            distance: 85,
             color: "#ffffff",
             opacity: 0.3,
-            width: 0.6,
+            width: 0.4,
         },
         move: {
             enable: true,
-            speed: 5,
+            speed: 3,
             direction: "none",
             random: false,
             straight: false,
@@ -90,7 +90,7 @@ const particlesConfig = {
                 speed: 3,
             },
             repulse: {
-                distance: 100,
+                distance: 30,
                 duration: 0.4,
             },
             push: {
