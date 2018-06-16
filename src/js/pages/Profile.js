@@ -2,26 +2,33 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import * as userActions from "../redux/actions/userActions";
 import { decryptAppTokens } from "../utils/helperMethods";
 import "../../css/profile.scss";
 
 class Profile extends React.Component {
     constructor() {
         super();
-        this.state = {
-
-        };
+        this.state = {};
 
         this.handleLogout = this.handleLogout.bind( this );
     }
 
+    componentDidMount() {
+        const userData = decryptAppTokens();
+        this.props.getUserProfile( userData );
+    }
     handleLogout() {
-        const { handleLogout } = this.props.options;
         const {
             email, provider, decryptedToken, decryptedSocialToken,
         } = decryptAppTokens();
 
-        handleLogout( email, provider, decryptedToken, decryptedSocialToken );
+        this.props.logoutUser( {
+            email, provider, decryptedToken, decryptedSocialToken,
+        } )
+            .then( () => {
+                this.props.history.replace( "/login" );
+            } );
     }
 
     showCreatedSites() {
@@ -78,10 +85,9 @@ class Profile extends React.Component {
 }
 
 Profile.propTypes = {
-    options: PropTypes.shape( {
-        handleLogout: PropTypes.func.isRequired,
-    } ).isRequired,
-    user: PropTypes.shape.isRequired,
+    logoutUser: PropTypes.func.isRequired,
+    getUserProfile: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
 
@@ -89,4 +95,9 @@ const mapStateToProps = ( state ) => ( {
     user: state.user.userData,
 } );
 
-export default connect( mapStateToProps )( Profile );
+const mapDispatchToProps = ( dispatch ) => ( {
+    getUserProfile: userData => dispatch( userActions.getUserProfile( userData ) ),
+    logoutUser: userData => dispatch( userActions.logoutUser( userData ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( Profile );

@@ -1,16 +1,20 @@
 /* eslint jsx-a11y/label-has-for: "off" */
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
 import "../../css/settings.scss";
 import "../../css/responsive.scss";
 
 import FormInput from "../components/FormInput";
 import Modal from "../components/Modal";
 import SettingsAvatar from "../components/SettingsAvatar";
+import * as userActions from "../redux/actions/userActions";
+import * as messageActions from "../redux/actions/messageActions";
 
 import { defaultAvatar, decryptAppTokens } from "../utils/helperMethods";
 
-export default class Settings extends React.Component {
+class Settings extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -52,7 +56,7 @@ export default class Settings extends React.Component {
 
     handleBackClick() {
         const { unsavedChanges } = this.state;
-        const { hideMessage } = this.props.options;
+        const { hideMessage } = this.props;
 
         if ( unsavedChanges ) {
             this.setState( { showModal: true } );
@@ -88,7 +92,7 @@ export default class Settings extends React.Component {
     }
 
     handleInputFocus() {
-        const { showSuccessMessage, error, hideMessage } = this.props.options;
+        const { showSuccessMessage, error, hideMessage } = this.props;
 
         this.setState( {
             validationErrors: {
@@ -118,7 +122,6 @@ export default class Settings extends React.Component {
     }
 
     saveGeneralProfileChanges() {
-        const { handleProfileUpdate } = this.props.options;
         const { imagePreview } = this.state;
 
         const invalidEmail = this.email.value === "";
@@ -135,7 +138,12 @@ export default class Settings extends React.Component {
         }
 
         const userDetails = decryptAppTokens();
-        handleProfileUpdate( this.email.value, this.name.value, imagePreview, userDetails );
+        this.props.updateUserProfile( {
+            email: this.email.value,
+            name: this.name.value,
+            avatar: imagePreview,
+            userDetails,
+        } );
 
         this.setState( {
             unsavedChanges: false,
@@ -143,7 +151,6 @@ export default class Settings extends React.Component {
     }
 
     savePasswordChanges() {
-        const { handlePasswordChange } = this.props.options;
         const { currentPassword, newPassword, newRetypedPassword } = this.state;
 
         const invalidCurrentPassword = currentPassword === "";
@@ -163,7 +170,9 @@ export default class Settings extends React.Component {
 
         const userDetails = decryptAppTokens();
 
-        handlePasswordChange( currentPassword, newPassword, newRetypedPassword, userDetails );
+        this.props.changeUserPassword( {
+            currentPassword, newPassword, retypedPassword: newRetypedPassword, userDetails,
+        } );
 
         this.setState( {
             unsavedChanges: false,
@@ -181,7 +190,7 @@ export default class Settings extends React.Component {
             newRetypedPassword: invalidNewRetypedPassword,
         } = validationErrors;
 
-        const { error, user, showSuccessMessage } = this.props.options;
+        const { error, user, showSuccessMessage } = this.props;
         const { displayName, avatar, providers } = user;
         const { email } = providers[ 0 ];
 
@@ -345,16 +354,27 @@ export default class Settings extends React.Component {
 }
 
 Settings.propTypes = {
-    options: PropTypes.shape( {
-        user: PropTypes.object.isRequired,
-        handleProfileUpdate: PropTypes.func.isRequired,
-        handlePasswordChange: PropTypes.func.isRequired,
-        showSuccessMessage: PropTypes.bool.isRequired,
-        hideMessage: PropTypes.func.isRequired,
-        error: PropTypes.shape( {
-            status: PropTypes.bool.isRequired,
-            message: PropTypes.string.isRequired,
-        } ).isRequired,
-    } ).isRequired,
+    user: PropTypes.object.isRequired, // eslint-disable-line
+    changeUserPassword: PropTypes.func.isRequired,
+    updateUserProfile: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
+    showSuccessMessage: PropTypes.bool.isRequired,
+    hideMessage: PropTypes.func.isRequired,
+    error: PropTypes.shape( {
+        status: PropTypes.bool.isRequired,
+        message: PropTypes.string.isRequired,
+    } ).isRequired,
 };
+
+const mapStateToProps = ( state ) => ( {
+    error: state.messages.error,
+    user: state.user.userData,
+    showSuccessMessage: state.messages.showSuccessMessage,
+} );
+const mapDispatchToProps = ( dispatch ) => ( {
+    changeUserPassword: userData => dispatch( userActions.changeUserPassword( userData ) ),
+    updateUserProfile: userData => dispatch( userActions.updateUserProfile( userData ) ),
+    hideMessage: () => dispatch( messageActions.hideMessage() ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( Settings );

@@ -35,9 +35,13 @@ class Login extends React.Component {
     }
 
     callSocialLoginApi( providerType ) {
-        const { handleSocialLogin } = this.props.options;
-
-        handleSocialLogin( providerType, this.accessToken );
+        this.props.loginUserSocial( {
+            provider: providerType,
+            accessToken: this.accessToken,
+        } )
+            .then( () => {
+                this.props.history.replace( "/profile" );
+            } );
     }
 
     handleInputChange( evt ) {
@@ -182,10 +186,8 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    options: PropTypes.shape( {
-        handleSocialLogin: PropTypes.func.isRequired,
-    } ).isRequired,
     loginUserLocal: PropTypes.func.isRequired,
+    loginUserSocial: PropTypes.func.isRequired,
     error: PropTypes.shape( {
         status: PropTypes.bool.isRequired,
         message: PropTypes.string.isRequired,
@@ -200,6 +202,7 @@ const mapStateToProps = ( state ) => ( {
 const mapDispatchToProps = ( dispatch ) => ( {
     loginUserLocal: loginData => dispatch( userActions.loginUserLocal( loginData ) ),
     hideMessage: () => dispatch( messageActions.hideMessage() ),
+    loginUserSocial: loginData => dispatch( userActions.loginUserSocial( loginData ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( Login );

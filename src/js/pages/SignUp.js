@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import "../../css/login.scss";
 import FormInput from "../components/FormInput";
 import SocialLogin from "../components/SocialLogin";
+import * as userActions from "../redux/actions/userActions";
+import * as messageActions from "../redux/actions/messageActions";
 
 class SignUp extends React.Component {
     constructor() {
@@ -35,9 +37,13 @@ class SignUp extends React.Component {
     }
 
     callSocialLoginApi( providerType ) {
-        const { handleSocialLogin } = this.props.options;
-
-        handleSocialLogin( providerType, this.accessToken );
+        this.props.loginUserSocial( {
+            provider: providerType,
+            accessToken: this.accessToken,
+        } )
+            .then( () => {
+                this.props.history.replace( "/profile" );
+            } );
     }
 
     handleInputChange( evt ) {
@@ -84,8 +90,19 @@ class SignUp extends React.Component {
             return;
         }
 
-        const { handleLocalRegister } = this.props.options;
-        handleLocalRegister( email, password, retypePassword, name, "local" );
+        this.props.registerUserLocal( {
+            email, password, retypePassword, name, provider: "local",
+        } ).then( () => {
+            const { showSuccessMessage } = this.props;
+            if ( showSuccessMessage ) {
+                this.setState( {
+                    email: "",
+                    name: "",
+                    password: "",
+                    retypePassword: "",
+                } );
+            }
+        } );
     }
 
     socialLoginResponse( response, providerType ) {
@@ -116,8 +133,7 @@ class SignUp extends React.Component {
             email: invalidEmail, password: invalidPassword, retypePassword: invalidRetypePassword,
             name: invalidName,
         } = validationErrors;
-        const { error, hideMessage } = this.props.options;
-        const { showSuccessMessage } = this.props;
+        const { showSuccessMessage, error, hideMessage } = this.props;
 
         return (
             <div className="login-page">
@@ -222,21 +238,27 @@ class SignUp extends React.Component {
 }
 
 SignUp.propTypes = {
-    options: PropTypes.shape( {
-        error: PropTypes.shape( {
-            status: PropTypes.bool.isRequired,
-            message: PropTypes.string.isRequired,
-        } ).isRequired,
-        handleLocalRegister: PropTypes.func.isRequired,
-        handleSocialLogin: PropTypes.func.isRequired,
-        hideMessage: PropTypes.func.isRequired,
+    loginUserSocial: PropTypes.func.isRequired,
+    error: PropTypes.shape( {
+        status: PropTypes.bool.isRequired,
+        message: PropTypes.string.isRequired,
     } ).isRequired,
     showSuccessMessage: PropTypes.bool.isRequired,
+    registerUserLocal: PropTypes.func.isRequired,
+    hideMessage: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 const mapStateToProps = ( state ) => ( {
-    showSuccessMessage: state.message.showSuccessMessage,
+    error: state.messages.error,
+    showSuccessMessage: state.messages.showSuccessMessage,
+
 } );
 
-export default connect( mapStateToProps )( SignUp );
+const mapDispatchToProps = ( dispatch ) => ( {
+    registerUserLocal: registerData => dispatch( userActions.registerUserLocal( registerData ) ),
+    hideMessage: () => dispatch( messageActions.hideMessage() ),
+    loginUserSocial: loginData => dispatch( userActions.loginUserSocial( loginData ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( SignUp );

@@ -1,24 +1,27 @@
 @media only screen and (min-width: 700px ) {
-    .settings-container {
+    .settings-page .settings-container {
         width: 65%;
     }
-    .user-info-container {
+    .settings-block .user-info-container {
         flex-basis: 55%;
     }
-    .save-button {
+    .settings-block .save-button {
         margin: 30px auto 0 0;
         padding: 13px 18px;
     }
-    .settings-block {
+    .settings-container .settings-block {
         flex-direction: row;
         padding: 20px 30px 55px;
         justify-content: space-between;
     }
-    .update-avatar-container {
+    .settings-block .update-avatar-container {
         margin-top: 0;
         margin-right: 30px;
     }
-    .profile-welcome-message {
+    .settings-container .settings-block.centered-content {
+      justify-content: center;
+    }
+    .profile-header .profile-welcome-message {
         font-size: 1.7rem;
     }
 
@@ -30,48 +33,48 @@
 }
 
 @media only screen and (min-width: 900px ) {
-    .settings-container {
+    .settings-page .settings-container {
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
         width: 85%;
     }
-    .settings-block {
+    .settings-container .settings-block {
         flex-basis: 55%;
     }
-    .settings-block.centered-content {
+    .settings-container .settings-block.centered-content {
         flex-basis: 40%;
         justify-content: center;
         width: 100%;
     }
 
-    .settings-input-container {
+    .user-info-container .settings-input-container {
         margin-bottom: 30px;
     }
 
-    .update-avatar-container {
+    .settings-block .update-avatar-container {
         margin-right: 15px;
     }
-    .user-info-container.centered-content {
+    .settings-block .user-info-container.centered-content {
         flex-basis: auto;
         width: 85%;
     }
-    .avatar {
+    .sidebar .avatar {
         width: 100px;
         height: 100px;
         padding: 8px;
     }
-    .no-websites-message {
+    .empty-container .no-websites-message {
         font-size: 2.4rem;
     }
-    .modal-text {
+    .designer-welcome-box .modal-text {
         font-size: 2rem;
         line-height: 30px;
     }
-    .designer-modal-subtitle {
+    .modal-text .designer-modal-subtitle {
         font-size: 1.7rem;
     }
-    .confirm-button {
+    .designer-welcome-box .confirm-button {
         font-size: 1.2rem;
         padding: 13px 30px;
     }
@@ -103,26 +106,26 @@
       width: 30px;
       height: 1px;
     }
-    .settings-container {
+    .settings-page .settings-container {
         width: 70%;
     }
-    .settings-avatar {
+    .update-avatar-container .settings-avatar {
         width: 110px;
         height: 110px;
         padding: 10px;
     }
-    .profile-navigation-button {
+    .empty-container .profile-navigation-button {
         font-size: 1.4rem;
         padding: 15px;
     }
-    .no-websites-message {
+    .empty-container .no-websites-message {
         font-size: 2.5rem;
         line-height: 33px;
     }
-    .profile-welcome-message {
+    .profile-header .profile-welcome-message {
         font-size: 1.7rem;
     }
-    .avatar {
+    .sidebar .avatar {
         width: 110px;
         height: 110px;
         padding: 10px;
@@ -147,36 +150,35 @@
         font-size: 6.3rem;
     }
 
-    aside.sidebar {
+    .profile-container aside.sidebar {
         flex: 0.7;
     }
 
-    .settings-container {
+    .settings-page .settings-container {
         width: 65%;
     }
-    .settings-block {
+    .settings-container .settings-block {
         flex-basis: 50%;
     }
-    .settings-block.centered-content {
+    .settings-container .settings-block.centered-content {
         flex-basis: 45%;
     }
-    .avatar {
+    .sidebar .avatar {
         width: 120px;
         height: 120px;
         padding: 13px;
     }
-    .profile-welcome-message {
+    .profile-header .profile-welcome-message {
         font-size: 2.1rem;
     }
-    .modal-text {
+    .designer-welcome-box .modal-text {
         font-size: 2.4rem;
     }
-    .designer-modal-subtitle {
+    .modal-text .designer-modal-subtitle {
         font-size: 2.1rem;
     }
-    .confirm-button {
+    .designer-welcome-box .confirm-button {
         font-size: 1.5rem;
         padding: 15px 35px;
     }
-
 }

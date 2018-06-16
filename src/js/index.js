@@ -12,12 +12,14 @@ const appContainer = document.querySelector( ".app" );
 const initialState = {
     user: {
         isAuthenticated: false,
+        userData: {},
     },
     messages: {
         error: {
             status: false,
             message: "",
         },
+        showSuccessMessage: false,
     },
 };
 

@@ -1,8 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import * as userActions from "../redux/actions/userActions";
 import "../../css/designer.scss";
 
-export default class Designer extends React.Component {
+class Designer extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -19,7 +22,7 @@ export default class Designer extends React.Component {
     }
 
     render() {
-        const { user: { displayName } } = this.props.options;
+        const { user: { displayName } } = this.props;
         const { showModal, showModalContainer } = this.state;
         const modalStyle = showModal ?
             "designer-welcome-box" : "designer-welcome-box slide-out";
@@ -51,9 +54,18 @@ export default class Designer extends React.Component {
 }
 
 Designer.propTypes = {
-    options: PropTypes.shape( {
-        getUserProfile: PropTypes.func.isRequired,
-        user: PropTypes.object.isRequired,
-    } ).isRequired,
+    // getUserProfile: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired, // eslint-disable-line
     // history: PropTypes.object.isRequired, // eslint-disable-line
 };
+
+const mapStateToProps = ( state ) => ( {
+    user: state.user.userData,
+} );
+
+const mapDispatchToProps = ( dispatch ) => ( {
+    getUserProfile: userData => dispatch( userActions.getUserProfile( userData ) ),
+
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( Designer );

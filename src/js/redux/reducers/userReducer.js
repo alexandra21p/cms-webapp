@@ -8,7 +8,7 @@ export default function userReducer( state = {}, action ) {
                 isAuthenticated: true,
             } );
         }
-        case types.LOAD_LOGGED_USER_FAILURE: {
+        case types.INVALIDATE_USER: {
             return Object.assign( {}, state, { isAuthenticated: false, userData: {} } );
         }
         default:
