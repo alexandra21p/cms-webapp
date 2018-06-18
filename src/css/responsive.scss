@@ -137,6 +137,9 @@
   .home-content h1.home-title {
     line-height: 50px;
   }
+  .separator a.get-started {
+    width: 250px;
+  }
 }
 
 @media only screen and (min-width: 1450px ) {
@@ -180,5 +183,11 @@
     .designer-welcome-box .confirm-button {
         font-size: 1.5rem;
         padding: 15px 35px;
+    }
+    .home-content h1.home-title {
+      line-height: 65px;
+    }
+    .separator a.get-started {
+      font-size: 1.05vw;
     }
 }
