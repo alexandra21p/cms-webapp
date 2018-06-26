@@ -6,6 +6,20 @@ import * as userActions from "../redux/actions/userActions";
 import { decryptAppTokens } from "../utils/helperMethods";
 import "../../css/profile.scss";
 
+const showCreatedSites = () => (
+    <div className="empty-container">
+        <h2 className="no-websites-message">
+            You haven&apos;t created any websites yet. <br /> Let&apos;s change that.
+        </h2>
+        <Link
+            className="profile-navigation-button"
+            to="/designer"
+        >
+            Create a new site
+        </Link>
+    </div>
+);
+
 class Profile extends React.Component {
     constructor() {
         super();
@@ -31,31 +45,16 @@ class Profile extends React.Component {
             } );
     }
 
-    showCreatedSites() {
-        console.log( this );
-        return (
-            <div className="empty-container">
-                <h2 className="no-websites-message">
-                You haven&apos;t created any websites yet. <br /> Let&apos;s change that.
-                </h2>
-                <Link
-                    className="profile-navigation-button"
-                    to="/designer"
-                >
-                Create a new site
-                </Link>
-            </div>
-        );
-    }
-
     render() {
         const { user: { avatar, displayName } } = this.props;
         const { email } = JSON.parse( localStorage.getItem( "userDetails" ) );
-
+        const welcomeMessage = displayName ? `Hello, ${ displayName }!` : "Hello there!";
         return (
             <div className="profile-page">
                 <header className="profile-header">
-                    <h3 className="profile-welcome-message">Hello, { displayName }!</h3>
+                    <h3 className="profile-welcome-message">
+                        {welcomeMessage} Nice seeing you here!
+                    </h3>
                     <button className="logout-button" onClick={ this.handleLogout }>
                 logout
                     </button>
@@ -63,19 +62,29 @@ class Profile extends React.Component {
 
                 <div className="profile-container">
                     <aside className="sidebar">
-                        <img src={ avatar } alt="avatar" className="avatar" />
-                        <span className="profile-email">{email}</span>
-                        <nav className="profile-side-navigation">
-                            <li className="profile-navigation-item">
-                                <Link to="/settings" className="profile-nav-link" >
-                                Account Settings
-                                </Link>
-                            </li>
-                        </nav>
+                        <div className="hamburger-menu-toggle">
+                            <input type="checkbox" />
+                            <span />
+                            <span />
+                            <span />
+
+                            <div className="hamburger-content">
+                                <img src={ avatar } alt="avatar" className="avatar" />
+                                <h6 className="sidebar-subtitle">your details</h6>
+                                <span className="profile-email">{email}</span>
+                                <nav className="profile-side-navigation">
+                                    <li className="profile-navigation-item">
+                                        <Link to="/settings" className="profile-nav-link" >
+                                  Account Settings
+                                        </Link>
+                                    </li>
+                                </nav>
+                            </div>
+                        </div>
                     </aside>
 
                     <main className="profile-main-container">
-                        { this.showCreatedSites() }
+                        { showCreatedSites() }
                     </main>
                 </div>
             </div>

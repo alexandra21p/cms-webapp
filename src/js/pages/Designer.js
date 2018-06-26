@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
+import BasicModal from "../components/BasicModal";
 import * as userActions from "../redux/actions/userActions";
 import "../../css/designer.scss";
 
@@ -31,21 +32,13 @@ class Designer extends React.Component {
 
         return (
             <div className="designer-page">
-
-                <div className={ modalContainerStyle }>
-                    <div className={ modalStyle }>
-                        <h2 className="modal-text">Hey there, {displayName}! <br />
-                            <span className="designer-modal-subtitle">
-                            This is the designer page, where the magic happens.
-                            </span>
-                        </h2>
-                        <button
-                            className="confirm-button"
-                            onClick={ this.closeModal }
-                        >Got it
-                        </button>
-                    </div>
-                </div>
+                <BasicModal
+                    title={ `Hey there, ${ displayName }!` }
+                    subtitle="This is the designer page, where the magic happens."
+                    closeHandler={ this.closeModal }
+                    modalContainerStyle={ modalContainerStyle }
+                    modalContentStyle={ modalStyle }
+                />
 
                 <h1>Random text here on the designer page, just to fill this space a bit.</h1>
             </div>

@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import configureStore from "./redux/store/configureStore";
 import App from "./App";
 import "../css/main.scss";
+import "../css/custom.scss";
 import "../css/responsive.scss";
 
 const appContainer = document.querySelector( ".app" );
