@@ -1,7 +1,7 @@
 import * as types from "../actions/actionTypes";
 
 export default function errorReducer( state = {}, action ) {
-    switch ( action.type ) {
+    switch ( action.type ) { /* eslint complexity: 'off' */
         case types.LOAD_LOGGED_USER_SUCCESS: {
             return Object.assign( {}, state, {
                 error: {
@@ -15,7 +15,7 @@ export default function errorReducer( state = {}, action ) {
             return Object.assign( {}, state, {
                 error: {
                     status: true,
-                    message: action.message,
+                    message: action.message === undefined ? "" : action.message,
                 },
             } );
         }

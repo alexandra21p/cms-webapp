@@ -29,8 +29,7 @@ export function getUserProfile( userData ) {
             .then( ( { payload } ) => {
                 dispatch( loadLoggedUserSuccess( payload ) );
             } )
-            .catch( ( error ) => {
-                console.log( error );
+            .catch( () => {
                 dispatch( invalidateUser() );
                 dispatch( messageActions.showUserActionError() );
             } );

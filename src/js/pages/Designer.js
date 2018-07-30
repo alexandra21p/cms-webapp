@@ -1,3 +1,6 @@
+/* eslint 'jsx-a11y/no-static-element-interactions': 0, 'jsx-a11y/click-events-have-key-events': 0,
+ 'complexity': 0
+*/
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -17,10 +20,12 @@ class Designer extends React.Component {
             visibleModalContainer: true,
             canvasElements: [],
             currentDragElement: null,
+            selectedCanvasItem: null,
             availableComponents: [
                 {
                     id: "firstElement",
                     text: "drag me bitchhh",
+                    type: "header",
                 },
             ],
         };
@@ -30,6 +35,8 @@ class Designer extends React.Component {
         this.onDragStart = this.onDragStart.bind( this );
         this.onDragStop = this.onDragStop.bind( this );
         this.onDrop = this.onDrop.bind( this );
+        this.onMouseOut = this.onMouseOut.bind( this );
+        this.onSelectCanvasElement = this.onSelectCanvasElement.bind( this );
     }
 
     onDragStart( evt, id ) {
@@ -40,8 +47,9 @@ class Designer extends React.Component {
     }
 
     onDragOver( evt ) {
-        console.log( this );
         evt.preventDefault();
+        console.log( this, evt );
+        evt.dataTransfer.dropEffect = "move"; /* eslint no-param-reassign: 'off' */
     }
     onDragStop() {
         this.setState( {
@@ -52,17 +60,42 @@ class Designer extends React.Component {
         const id = evt.dataTransfer.getData( "id" );
         const { availableComponents } = this.state;
         const newCanvasItem = availableComponents.find( comp => comp.id === id );
+        console.log( newCanvasItem );
+        if ( !newCanvasItem ) {
+            return;
+        }
+        const idOnCanvas = `${ newCanvasItem.type }${ Date.now() }`;
+        console.log( idOnCanvas );
         this.setState( {
-            canvasElements: [ ...this.state.canvasElements, newCanvasItem ],
+            canvasElements: [ ...this.state.canvasElements, { ...newCanvasItem, id: idOnCanvas } ],
         } );
     }
-    onMouseOver( id, evt ) {
+    onCanvasElementSelection( id, evt ) {
         console.log( this, evt.target.getClientRects() );
+        this.setState( {
+            currentDragElement: id,
+        } );
+    }
+    onSelectCanvasElement( id ) {
+        this.setState( { selectedCanvasItem: id } );
+    }
+
+    onMouseOut() {
+        if ( this.state.selectedCanvasItem ) {
+            return;
+        }
+        this.setState( {
+            currentDragElement: null,
+        } );
     }
 
     closeModal() {
         this.setState( { visibleModal: false } );
         setTimeout( () => this.setState( { visibleModalContainer: false } ), 400 );
+    }
+
+    deselectCanvasElement( evt ) {
+        console.log( evt.target, this );
     }
 
     handleBackClick() {
@@ -73,7 +106,10 @@ class Designer extends React.Component {
     render() {
         const { displayName, avatar, providers } = this.props.user;
         const { email } = providers[ 0 ];
-        const { visibleModal, visibleModalContainer, availableComponents } = this.state;
+        const {
+            visibleModal, visibleModalContainer, availableComponents, currentDragElement,
+            canvasElements,
+        } = this.state;
         const modalStyle = visibleModal ?
             "designer-welcome-box" : "designer-welcome-box slide-out";
         const modalContainerStyle = visibleModalContainer ?
@@ -101,7 +137,7 @@ class Designer extends React.Component {
                 <div className="content">
                     <aside className="components-container">
                         <div
-                            className={ this.state.currentDragElement
+                            className={ currentDragElement
                                 ? "component dragging" : "component" }
                             draggable
                             id={ availableComponents[ 0 ].id }
@@ -116,20 +152,23 @@ class Designer extends React.Component {
                     </aside>
                     <main className="canvas-container">
                         <div
-                            className="canvas"
+                            className={ currentDragElement ? "canvas dragging" : "canvas" }
                             onDragOver={ ( e ) => { this.onDragOver( e ); } }
                             onDrop={ this.onDrop }
+                            onClick={ ( e ) => { this.deselectCanvasElement( e ); } }
                         >
-                            {this.state.canvasElements.map( elem => (
+                            {canvasElements.map( elem => (
                                 <div
                                     key={ elem.id }
-                                    onMouseOver={ ( e ) => { this.onMouseOver( elem.id, e ); } }
-                                    onFocus={ ( e ) => { this.onMouseOver( elem.id, e ); } }
-                                    className={ this.state.currentDragElement
-                                        ? "component dragging" : "component" }
+                                    onMouseOver={ ( e ) => { this.onCanvasElementSelection( elem.id, e ); } }
+                                    onFocus={ ( e ) => { this.onCanvasElementSelection( elem.id, e ); } }
+                                    onMouseOut={ this.onMouseOut }
+                                    onBlur={ this.onMouseOut }
+                                    onClick={ () => { this.onSelectCanvasElement( elem.id ); } }
+                                    className="canvas-element"
                                     id={ elem.id }
                                     style={ {
-                                        backgroundColor: "green", border: "2px solid magenta", borderRadius: "5px", width: "60%", height: "50px",
+                                        backgroundColor: "green", border: `${ currentDragElement === elem.id ? "2px dashed white" : "2px solid magenta" }`, borderRadius: "5px", width: "60%", height: "50px",
                                     } }
                                 >
                                     {elem.text}

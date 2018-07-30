@@ -122,7 +122,7 @@ class Login extends React.Component {
                     <div className="main-container">
                         <div className="login-form-container">
                             {
-                                error.status ?
+                                error.message ?
                                     <h5 className="notification-message error">
                                         {error.message}
                                     </h5> :
