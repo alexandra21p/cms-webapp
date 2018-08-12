@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 import BasicModal from "../components/BasicModal";
+import Canvas from "../components/canvas/Canvas";
 import * as userActions from "../redux/actions/userActions";
 import * as messageActions from "../redux/actions/messageActions";
 
@@ -20,12 +21,17 @@ class Designer extends React.Component {
             visibleModalContainer: true,
             canvasElements: [],
             currentDragElement: null,
-            selectedCanvasItem: null,
             availableComponents: [
                 {
                     id: "firstElement",
                     text: "drag me bitchhh",
                     type: "header",
+                    styles: {
+                        backgroundColor: "green",
+                        border: "2px solid magenta",
+                        width: "60%",
+                        height: "50px",
+                    },
                 },
             ],
         };
@@ -35,8 +41,6 @@ class Designer extends React.Component {
         this.onDragStart = this.onDragStart.bind( this );
         this.onDragStop = this.onDragStop.bind( this );
         this.onDrop = this.onDrop.bind( this );
-        this.onMouseOut = this.onMouseOut.bind( this );
-        this.onSelectCanvasElement = this.onSelectCanvasElement.bind( this );
     }
 
     onDragStart( evt, id ) {
@@ -46,56 +50,33 @@ class Designer extends React.Component {
         } );
     }
 
-    onDragOver( evt ) {
+    onDragOver( evt ) { // eslint-disable-line
         evt.preventDefault();
-        console.log( this, evt );
         evt.dataTransfer.dropEffect = "move"; /* eslint no-param-reassign: 'off' */
     }
-    onDragStop() {
+    onDragStop( ) {
         this.setState( {
             currentDragElement: null,
         } );
     }
-    onDrop( evt ) {
+    onDrop( evt, initialCoords ) {
         const id = evt.dataTransfer.getData( "id" );
         const { availableComponents } = this.state;
         const newCanvasItem = availableComponents.find( comp => comp.id === id );
-        console.log( newCanvasItem );
         if ( !newCanvasItem ) {
             return;
         }
         const idOnCanvas = `${ newCanvasItem.type }${ Date.now() }`;
-        console.log( idOnCanvas );
-        this.setState( {
-            canvasElements: [ ...this.state.canvasElements, { ...newCanvasItem, id: idOnCanvas } ],
-        } );
-    }
-    onCanvasElementSelection( id, evt ) {
-        console.log( this, evt.target.getClientRects() );
-        this.setState( {
-            currentDragElement: id,
-        } );
-    }
-    onSelectCanvasElement( id ) {
-        this.setState( { selectedCanvasItem: id } );
-    }
 
-    onMouseOut() {
-        if ( this.state.selectedCanvasItem ) {
-            return;
-        }
         this.setState( {
-            currentDragElement: null,
+            canvasElements: [
+                ...this.state.canvasElements, { ...newCanvasItem, id: idOnCanvas, initialCoords } ],
         } );
     }
 
     closeModal() {
         this.setState( { visibleModal: false } );
         setTimeout( () => this.setState( { visibleModalContainer: false } ), 400 );
-    }
-
-    deselectCanvasElement( evt ) {
-        console.log( evt.target, this );
     }
 
     handleBackClick() {
@@ -144,48 +125,56 @@ class Designer extends React.Component {
                             onDragStart={ ( e ) => { this.onDragStart( e, "firstElement" ); } }
                             onDragEnd={ this.onDragStop }
                             style={ {
-                                backgroundColor: "pink", border: "2px solid magenta", borderRadius: "5px", width: "60%", height: "50px",
+                                backgroundColor: "pink",
+                                border: "2px solid magenta",
+                                borderRadius: "5px",
+                                width: "60%",
+                                height: "50px",
                             } }
                         >
                             {availableComponents[ 0 ].text}
                         </div>
                     </aside>
-                    <main className="canvas-container">
-                        <div
-                            className={ currentDragElement ? "canvas dragging" : "canvas" }
-                            onDragOver={ ( e ) => { this.onDragOver( e ); } }
-                            onDrop={ this.onDrop }
-                            onClick={ ( e ) => { this.deselectCanvasElement( e ); } }
-                        >
-                            {canvasElements.map( elem => (
-                                <div
-                                    key={ elem.id }
-                                    onMouseOver={ ( e ) => { this.onCanvasElementSelection( elem.id, e ); } }
-                                    onFocus={ ( e ) => { this.onCanvasElementSelection( elem.id, e ); } }
-                                    onMouseOut={ this.onMouseOut }
-                                    onBlur={ this.onMouseOut }
-                                    onClick={ () => { this.onSelectCanvasElement( elem.id ); } }
-                                    className="canvas-element"
-                                    id={ elem.id }
-                                    style={ {
-                                        backgroundColor: "green", border: `${ currentDragElement === elem.id ? "2px dashed white" : "2px solid magenta" }`, borderRadius: "5px", width: "60%", height: "50px",
-                                    } }
-                                >
-                                    {elem.text}
-                                </div> ) )}
-                        </div>
 
-                    </main>
+                    <Canvas
+                        elements={ canvasElements }
+                        className={ currentDragElement ? "canvas dragging" : "canvas" }
+                        handleElementDrop={ this.onDrop }
+                    />
                 </div>
             </div>
         );
     }
 }
 
+// <main className="canvas-container">
+//     <div
+//         ref={ ( node ) => { this.canvas = node; } }
+//         className={ currentDragElement ? "canvas dragging" : "canvas" }
+//         onDragOver={ ( e ) => { this.onDragOver( e ); } }
+//         onDrop={ this.onDrop }
+//         onClick={ ( e ) => { this.deselectCanvasElement( e ); } }
+//         onMouseMove={ ( e ) => { this.onMouseMove( e ); } }
+//         onMouseUp={ this.onMouseUp }
+//     >
+//         {canvasElements.map( elem => (
+//             <CanvasItem
+//                 key={ elem.id }
+//                 itemSelectionHandler={ this.onCanvasItemSelection }
+//                 mouseOverHandler={ () => {} }
+//                 elementData={ elem }
+//                 selectedCanvasItem={ selectedCanvasItem }
+//                 coords={ selectedCanvasItem === elem.id
+//                     ? this.state.selectedCanvasItemCoords : null }
+//                 parentContainerProps={ this.canvasProperties }
+//             />
+//         ) )}
+//     </div>
+// </main>
+
 Designer.propTypes = {
-    // getUserProfile: PropTypes.func.isRequired,
-    user: PropTypes.object.isRequired, // eslint-disable-line
-    history: PropTypes.object.isRequired, // eslint-disable-line
+    user: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
     hideMessage: PropTypes.func.isRequired,
 };
 

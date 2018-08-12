@@ -104,10 +104,10 @@ main.canvas-container {
   position: relative;
 }
 .canvas-element {
-  position: relative;
-  cursor: grab;
-  cursor: -webkit-grab;
+  position: absolute;
+  cursor: move;
 }
+
 .dragging {
   cursor: grabbing;
   cursor: -webkit-grabbing;
