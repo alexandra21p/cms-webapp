@@ -19,12 +19,17 @@ class Canvas extends React.Component {
 
         this.onMouseUp = this.onMouseUp.bind( this );
         this.onCanvasItemSelection = this.onCanvasItemSelection.bind( this );
+        this.onCanvasItemResize = this.onCanvasItemResize.bind( this );
+        this.resizeCanvasElement = this.resizeCanvasElement.bind( this );
 
         this.canvasProperties = null;
         this.canMove = false;
         this.offsetLeft = 0;
         this.offsetTop = 0;
         this.scrollOffset = 0;
+        this.resizing = false;
+        this.resizeStartDimensions = null;
+        this.resizeHandle = null;
     }
 
     componentDidMount() {
@@ -38,8 +43,22 @@ class Canvas extends React.Component {
         document.querySelector( ".designer-page" )
             .addEventListener(
                 "scroll",
-                ( evt ) => { this.scrollOffset = evt.srcElement.scrollTop; },
+                ( evt ) => {
+                    this.scrollOffset = evt.srcElement.scrollTop;
+                },
             );
+        window.addEventListener(
+            "resize",
+            () => {
+                const canvasCoords = this.canvas.getClientRects()[ "0" ];
+                this.canvasProperties = {
+                    x: canvasCoords.x,
+                    y: canvasCoords.y,
+                    width: parseInt( canvasCoords.width, 10 ),
+                    height: parseInt( canvasCoords.height, 10 ),
+                };
+            },
+        );
     }
 
     onDragOver( evt ) { // eslint-disable-line
@@ -62,9 +81,12 @@ class Canvas extends React.Component {
         if ( eventType === "click" ) {
             this.setState( { selectedCanvasItem: id } );
             this.canMove = false;
+            this.resizing = false;
             return;
         }
         this.canMove = true;
+        this.resizing = false;
+
         const {
             width: parentWidth, height: parentHeight,
         } = this.canvasProperties;
@@ -72,8 +94,7 @@ class Canvas extends React.Component {
         const updatedTopOffset = Math.min( Math.max( mousePosition.clientY - y, 0 ), parentHeight );
 
         this.offsetLeft = updatedLeftOffset;
-        this.offsetTop = this.scrollOffset > 0
-            ? updatedTopOffset - ( this.scrollOffset * 2 ) : updatedTopOffset;
+        this.offsetTop = updatedTopOffset;
 
         this.setState( {
             selectedCanvasItem: id,
@@ -83,16 +104,62 @@ class Canvas extends React.Component {
         } );
     }
 
-    onMouseMove( evt ) {
-        if ( !this.canMove ) {
+    onCanvasItemResize( {
+        id, width, height, itemX, itemY,
+        eventType, mousePosition, resizeHandle, minimumDimensions,
+    } ) {
+        if ( eventType === "click" ) {
+            this.setState( { selectedCanvasItem: id } );
+            this.resizing = false;
+            this.canMove = false;
             return;
         }
+
+        this.resizing = true;
+        this.canMove = false;
+
+        const {
+            width: parentWidth, height: parentHeight, x, y,
+        } = this.canvasProperties;
+        const updatedLeftOffset = Math.min( Math.max( mousePosition.clientX - x, 0 ), parentWidth );
+        const updatedTopOffset = Math.min( Math.max( mousePosition.clientY - y, 0 ), parentHeight );
+
+        this.offsetLeft = updatedLeftOffset;
+        this.offsetTop = updatedTopOffset;
+        this.resizeStartDimensions = {
+            width,
+            height,
+            top: itemY,
+            left: itemX,
+            minimumDimensions,
+        };
+
+        this.resizeHandle = resizeHandle;
+
+        this.setState( {
+            selectedCanvasItem: id,
+            selectedCanvasItemCoords: {
+                width,
+                height,
+                left: itemX,
+                top: itemY,
+            },
+        } );
+    }
+
+    onMouseMove( evt ) {
+        if ( !this.canMove && !this.resizing ) {
+            return;
+        }
+
         const {
             width: parentWidth, height: parentHeight, x, y,
         } = this.canvasProperties;
         const { clientX, clientY } = evt;
 
-        const { width, height } = this.state.selectedCanvasItemCoords;
+        const {
+            width, height,
+        } = this.state.selectedCanvasItemCoords;
         const rightLimit = parentWidth - width;
         const bottomLimit = parentHeight - height;
         const xPosition = Math.max( clientX, x );
@@ -100,7 +167,14 @@ class Canvas extends React.Component {
 
         // need to update the top offset when scrolling
         this.offsetTop = this.scrollOffset > 0
-            ? this.offsetTop + this.scrollOffset : this.offsetTop;
+            ? this.offsetTop - this.scrollOffset : this.offsetTop;
+
+        if ( this.resizing ) {
+            this.resizeCanvasElement( {
+                clientX: xPosition, clientY: yPosition,
+            }, rightLimit, bottomLimit );
+            return;
+        }
 
         const computedOffsetLeft = xPosition - x - this.offsetLeft;
         const computedOffsetTop = yPosition - y - this.offsetTop;
@@ -112,11 +186,13 @@ class Canvas extends React.Component {
                 width,
                 height,
             },
-        }, () => { this.offsetTop -= this.scrollOffset; } );
+        }, () => { this.offsetTop += this.scrollOffset; } );
     }
 
     onMouseUp() {
         this.canMove = false;
+        this.resizing = false;
+        this.resizeHandle = null;
         if ( this.state.selectedCanvasItemCoords ) {
             this.setState( { selectedCanvasItemCoords: null } );
         }
@@ -129,9 +205,85 @@ class Canvas extends React.Component {
         this.setState( { selectedCanvasItem: null } );
     }
 
+    resizeCanvasElement( {
+        clientX: xPosition, clientY: yPosition,
+    }, rightLimit, bottomLimit ) {
+        const {
+            top: lastY, left: lastX,
+        } = this.state.selectedCanvasItemCoords;
+        const { x, y } = this.canvasProperties;
+        const {
+            left, top, width, height, minimumDimensions,
+        } = this.resizeStartDimensions;
+
+        const resizeHandleOffsetLeft = xPosition - x;
+        const resizeHandleOffsetTop = yPosition - y;
+        let computedWidth, // eslint-disable-line
+            computedHeight,
+            computedLeftOffset,
+            computedTopOffset;
+
+        switch ( this.resizeHandle ) {
+            case "top-left": {
+                computedWidth = width
+                - ( resizeHandleOffsetLeft - this.offsetLeft );
+                computedHeight = height
+                - ( resizeHandleOffsetTop - this.offsetTop );
+                computedTopOffset = computedHeight < minimumDimensions.height
+                    ? lastY : top + ( resizeHandleOffsetTop - this.offsetTop );
+                computedLeftOffset = computedWidth < minimumDimensions.width
+                    ? lastX : left + ( resizeHandleOffsetLeft - this.offsetLeft );
+                break;
+            }
+            case "top-right": {
+                computedWidth = width
+        + ( resizeHandleOffsetLeft - this.offsetLeft );
+                computedHeight = height
+        - ( resizeHandleOffsetTop - this.offsetTop );
+                computedTopOffset = computedHeight < minimumDimensions.height
+                    ? lastY : top + ( resizeHandleOffsetTop - this.offsetTop );
+                computedLeftOffset = left;
+                break;
+            }
+            case "bottom-left": {
+                computedWidth = width
+            - ( resizeHandleOffsetLeft - this.offsetLeft );
+                computedHeight = ( height
+            + resizeHandleOffsetTop ) - this.offsetTop;
+                computedLeftOffset = computedWidth < minimumDimensions.width
+                    ? lastX : left + ( resizeHandleOffsetLeft - this.offsetLeft );
+                computedTopOffset = top;
+                break;
+            }
+            case "bottom-right": {
+                computedWidth = ( width
+              + resizeHandleOffsetLeft ) - this.offsetLeft;
+                computedHeight = ( height
+              + resizeHandleOffsetTop ) - this.offsetTop;
+                computedLeftOffset = left;
+                computedTopOffset = top;
+                break;
+            }
+            default: {
+                return;
+            }
+        }
+
+        this.setState( {
+            selectedCanvasItemCoords: {
+                left: Math.min( Math.max( computedLeftOffset, 0 ), rightLimit ),
+                top: Math.min( Math.max( computedTopOffset, 0 ), bottomLimit ),
+                width: computedWidth,
+                height: computedHeight,
+            },
+        }, () => { this.offsetTop += this.scrollOffset; } );
+    }
+
     render() {
         const { selectedCanvasItem } = this.state;
-        const { elements, className } = this.props;
+        const {
+            elements, className, handleElementEdit, handleElementDelete,
+        } = this.props;
 
         return (
             <main className="canvas-container">
@@ -148,12 +300,15 @@ class Canvas extends React.Component {
                         <CanvasItem
                             key={ elem.id }
                             itemSelectionHandler={ this.onCanvasItemSelection }
+                            itemResizeHandler={ this.onCanvasItemResize }
                             mouseOverHandler={ () => {} }
                             elementData={ elem }
                             selectedCanvasItem={ selectedCanvasItem }
                             coords={ selectedCanvasItem === elem.id
                                 ? this.state.selectedCanvasItemCoords : null }
                             parentContainerProps={ this.canvasProperties }
+                            editElementHandler={ handleElementEdit }
+                            deleteElementHandler={ handleElementDelete }
                         />
                     ) )}
                 </div>
@@ -166,6 +321,8 @@ Canvas.propTypes = {
     elements: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
     handleElementDrop: PropTypes.func.isRequired,
+    handleElementEdit: PropTypes.func.isRequired,
+    handleElementDelete: PropTypes.func.isRequired,
 };
 
 export default Canvas;

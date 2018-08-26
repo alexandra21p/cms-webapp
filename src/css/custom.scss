@@ -7,7 +7,12 @@
   padding-top: 30px;
   -webkit-user-select: none;
   user-select: none;
-  z-index: 1;
+  z-index: 110;
+  transition: left 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
+}
+
+.edit-panel {
+  position: absolute;
 }
 
 .hamburger-menu-toggle > input {
@@ -18,7 +23,7 @@
   left: -5px;
   cursor: pointer;
   opacity: 0;
-  z-index: 2;
+  z-index: 113;
 }
 
 .hamburger-menu-toggle > span {
@@ -29,7 +34,7 @@
   position: relative;
   background: #cdcdcd;
   border-radius: 3px;
-  z-index: 1;
+  z-index: 113;
   transform-origin: 4px 0px;
   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
               background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
@@ -74,4 +79,9 @@
 
 .hamburger-menu-toggle input:checked ~ .hamburger-content {
   transform: none;
+}
+
+.hamburger-menu-toggle .hamburger-content.edit-panel-content {
+  z-index: 110;
+  width: 400px;
 }

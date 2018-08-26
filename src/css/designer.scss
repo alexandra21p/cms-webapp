@@ -15,7 +15,7 @@
     margin: 0 auto;
     padding: 10px 20px;
     opacity: 1;
-    z-index: 11;
+    z-index: 1010;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -87,11 +87,13 @@
 .content {
   display: flex;
   min-height: 100%;
-  // padding: 80px 0 20px;
-  margin: 13vh 10px 0;
+  margin: 13vh 10px 0 0;
+  position: relative;
 }
 aside.components-container {
   flex: 0.5;
+  margin: 10px 30px 0 0;
+  padding-left: 15px;
 }
 main.canvas-container {
   border: 1px solid #584b4f;
@@ -100,15 +102,97 @@ main.canvas-container {
 }
 .canvas {
   height: 100%;
-  background-color: $primary-color;
+  background-color: grey;
   position: relative;
 }
 .canvas-element {
   position: absolute;
   cursor: move;
+  user-select: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-element-wrapper {
+  position: absolute;
+  user-select: none;
 }
 
 .dragging {
   cursor: grabbing;
   cursor: -webkit-grabbing;
+}
+
+.simple-button {
+  color: $primary-color;
+  border: none;
+  background-color: transparent;
+  font-size: 1.5rem;
+  margin: 0 30px 0 15px;
+  border-left: 1px solid $tertiary-color-darker;
+  padding-left: 20px;
+}
+
+.size-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  visibility: hidden;
+}
+.canvas-item-actions {
+  position: absolute;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  // transform: translateX(-100px);
+  left: -85px;
+  top: 0;
+  display: none;
+  height: 85px;
+  bottom: 0;
+  margin: auto 0;
+  // transition: transform .3s ease;
+}
+
+button.action-button {
+  background-color: $secondary-color-darker;
+  padding: 5px 11px;
+  border: none;
+  border-radius: 50px;
+  animation: side-slide .3s forwards;
+}
+
+@keyframes side-slide {
+  from {
+    transform: translateX(5px);
+  }
+  to {
+    transform: translate(-5px);
+  }
+}
+.top-left {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+.top-right {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+.bottom-left {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+.bottom-right {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
 }

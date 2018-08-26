@@ -7,9 +7,11 @@ import { connect } from "react-redux";
 
 import BasicModal from "../components/BasicModal";
 import Canvas from "../components/canvas/Canvas";
+import ElementEditPanel from "../components/ElementEditPanel";
 import * as userActions from "../redux/actions/userActions";
 import * as messageActions from "../redux/actions/messageActions";
 
+import "../../css/profile.scss";
 import "../../css/settings.scss";
 import "../../css/designer.scss";
 
@@ -21,17 +23,19 @@ class Designer extends React.Component {
             visibleModalContainer: true,
             canvasElements: [],
             currentDragElement: null,
+            isEditPanelVisible: false,
+            editableElement: null,
             availableComponents: [
                 {
                     id: "firstElement",
                     text: "drag me bitchhh",
                     type: "header",
                     styles: {
-                        backgroundColor: "green",
+                        backgroundColor: "#00ff0078",
                         border: "2px solid magenta",
-                        width: "60%",
-                        height: "50px",
                     },
+                    width: "60%",
+                    height: "50px",
                 },
             ],
         };
@@ -41,6 +45,9 @@ class Designer extends React.Component {
         this.onDragStart = this.onDragStart.bind( this );
         this.onDragStop = this.onDragStop.bind( this );
         this.onDrop = this.onDrop.bind( this );
+        this.showElementEditPanel = this.showElementEditPanel.bind( this );
+        this.deleteElementFromCanvas = this.deleteElementFromCanvas.bind( this );
+        this.onEditPanelToggle = this.onEditPanelToggle.bind( this );
     }
 
     onDragStart( evt, id ) {
@@ -67,16 +74,18 @@ class Designer extends React.Component {
             return;
         }
         const idOnCanvas = `${ newCanvasItem.type }${ Date.now() }`;
-
         this.setState( {
             canvasElements: [
-                ...this.state.canvasElements, { ...newCanvasItem, id: idOnCanvas, initialCoords } ],
+                ...this.state.canvasElements, {
+                    ...newCanvasItem,
+                    id: idOnCanvas,
+                    initialCoords: {
+                        ...initialCoords,
+                        width: newCanvasItem.width,
+                        height: newCanvasItem.height,
+                    },
+                } ],
         } );
-    }
-
-    closeModal() {
-        this.setState( { visibleModal: false } );
-        setTimeout( () => this.setState( { visibleModalContainer: false } ), 400 );
     }
 
     handleBackClick() {
@@ -84,12 +93,37 @@ class Designer extends React.Component {
         this.props.history.replace( "/profile" );
     }
 
+    showElementEditPanel( elementData ) {
+        console.log( elementData, this );
+        this.setState( {
+            isEditPanelVisible: true,
+            editableElement: elementData,
+        } );
+    }
+
+    onEditPanelToggle( evt ) {
+        const { value } = evt.target;
+        this.setState( { isEditPanelVisible: false } );
+    }
+    deleteElementFromCanvas( id ) {
+        const canvasObjects = this.state.canvasElements.slice();
+        const itemIndex = canvasObjects.findIndex( item => item.id === id );
+        if ( id !== -1 ) {
+            canvasObjects.splice( itemIndex, 1 );
+            this.setState( { canvasElements: canvasObjects } );
+        }
+    }
+
+    closeModal() {
+        this.setState( { visibleModal: false } );
+        setTimeout( () => this.setState( { visibleModalContainer: false } ), 400 );
+    }
+
     render() {
-        const { displayName, avatar, providers } = this.props.user;
-        const { email } = providers[ 0 ];
+        const { displayName, avatar } = this.props.user;
         const {
             visibleModal, visibleModalContainer, availableComponents, currentDragElement,
-            canvasElements,
+            canvasElements, isEditPanelVisible, editableElement,
         } = this.state;
         const modalStyle = visibleModal ?
             "designer-welcome-box" : "designer-welcome-box slide-out";
@@ -111,12 +145,23 @@ class Designer extends React.Component {
             Back to profile
                     </button>
                     <div className="header-user-info">
-                        <img src={ avatar } alt="avatar" className="user-icon" />
-                        <span>{ email }</span>
+                        <img
+                            src={ avatar }
+                            alt="avatar"
+                            className="user-icon"
+                            style={ { marginRight: "13px" } }
+                        />
+                        <button className="simple-button" onClick={ () => {} }>Preview</button>
+                        <button className="confirm-button" onClick={ () => {} }>Publish</button>
                     </div>
                 </header>
                 <div className="content">
                     <aside className="components-container">
+                        <ElementEditPanel
+                            toggleHandler={ this.onEditPanelToggle }
+                            visible={ isEditPanelVisible }
+                            data={ editableElement || undefined }
+                        />
                         <div
                             className={ currentDragElement
                                 ? "component dragging" : "component" }
@@ -140,37 +185,14 @@ class Designer extends React.Component {
                         elements={ canvasElements }
                         className={ currentDragElement ? "canvas dragging" : "canvas" }
                         handleElementDrop={ this.onDrop }
+                        handleElementEdit={ this.showElementEditPanel }
+                        handleElementDelete={ this.deleteElementFromCanvas }
                     />
                 </div>
             </div>
         );
     }
 }
-
-// <main className="canvas-container">
-//     <div
-//         ref={ ( node ) => { this.canvas = node; } }
-//         className={ currentDragElement ? "canvas dragging" : "canvas" }
-//         onDragOver={ ( e ) => { this.onDragOver( e ); } }
-//         onDrop={ this.onDrop }
-//         onClick={ ( e ) => { this.deselectCanvasElement( e ); } }
-//         onMouseMove={ ( e ) => { this.onMouseMove( e ); } }
-//         onMouseUp={ this.onMouseUp }
-//     >
-//         {canvasElements.map( elem => (
-//             <CanvasItem
-//                 key={ elem.id }
-//                 itemSelectionHandler={ this.onCanvasItemSelection }
-//                 mouseOverHandler={ () => {} }
-//                 elementData={ elem }
-//                 selectedCanvasItem={ selectedCanvasItem }
-//                 coords={ selectedCanvasItem === elem.id
-//                     ? this.state.selectedCanvasItemCoords : null }
-//                 parentContainerProps={ this.canvasProperties }
-//             />
-//         ) )}
-//     </div>
-// </main>
 
 Designer.propTypes = {
     user: PropTypes.object.isRequired,
