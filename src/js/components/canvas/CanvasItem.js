@@ -56,7 +56,6 @@ class CanvasItem extends React.Component {
 
     onItemSelection( evt ) {
         const { elementData, itemSelectionHandler, itemResizeHandler } = this.props;
-        const coords = evt.target.getClientRects()[ "0" ];
         const mousePosition = {
             clientX: evt.clientX,
             clientY: evt.clientY,
@@ -76,20 +75,20 @@ class CanvasItem extends React.Component {
             return;
         }
 
+        const coords = evt.target.getClientRects()[ "0" ];
         itemSelectionHandler( {
             id: elementData.id,
             x: coords.x,
             y: coords.y,
             mousePosition,
-            width: coords.width,
-            height: coords.height,
+            width: this.currentCoords.width,
+            height: this.currentCoords.height,
             eventType: evt.type,
         } );
     }
 
     getDimensions() {
-        const { parentContainerProps, coords } = this.props;
-        this.currentCoords = coords || this.currentCoords;
+        const { parentContainerProps } = this.props;
 
         if ( !this.canComputeSize ) {
             return {
@@ -114,6 +113,13 @@ class CanvasItem extends React.Component {
                 ),
             parentContainerProps.height,
         );
+
+        this.currentCoords = {
+            ...this.currentCoords,
+            width: widthWithinBoundaries,
+            height: heightWithinBoundaries,
+        };
+
         return {
             widthWithinBoundaries, heightWithinBoundaries,
         };
@@ -126,9 +132,9 @@ class CanvasItem extends React.Component {
         } = this.props;
 
         // update the current coords
-        this.currentCoords = coords || this.currentCoords;
-
-        const { widthWithinBoundaries, heightWithinBoundaries } = this.getDimensions();
+        this.currentCoords = { ...this.currentCoords, ...coords } || this.currentCoords;
+        const { widthWithinBoundaries, heightWithinBoundaries } =
+        this.getDimensions( this.currentCoords );
         const { hovering } = this.state;
         const border = selectedCanvasItem === elementData.id
             ? "2px solid #fb9a88" : ( hovering ? "2px dashed white" : elementData.styles.border );

@@ -4,6 +4,11 @@ const defaultAvatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3N
 
 const capitalize = ( input ) => input.slice( 0, 1 ).toUpperCase() + input.slice( 1 ).toLowerCase();
 
+const kebabCase = ( str ) => str
+    .replace( /([a-z])([A-Z])/g, "$1-$2" )
+    .replace( /[\s_]+/g, "-" )
+    .toLowerCase();
+
 const getError = ( status, errorList ) => {
     const foundError = errorList.find( err => err.status === `${ status }` );
     const genericError = errorList.find( err => err.status === "default" );
@@ -64,4 +69,5 @@ export {
     checkProviderLoginStatus,
     defaultAvatar,
     decryptAppTokens,
+    kebabCase,
 };

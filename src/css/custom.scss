@@ -67,7 +67,7 @@
 .hamburger-menu-toggle .hamburger-content {
   position: absolute;
   width: 250px;
-  height: 100%;
+  height: 110%;
   left: -30px;
   top: 0;
   padding: 50px 30px;
@@ -79,9 +79,4 @@
 
 .hamburger-menu-toggle input:checked ~ .hamburger-content {
   transform: none;
-}
-
-.hamburger-menu-toggle .hamburger-content.edit-panel-content {
-  z-index: 110;
-  width: 400px;
 }

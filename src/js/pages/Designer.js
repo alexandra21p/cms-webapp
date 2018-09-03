@@ -1,5 +1,4 @@
-/* eslint 'jsx-a11y/no-static-element-interactions': 0, 'jsx-a11y/click-events-have-key-events': 0,
- 'complexity': 0
+/* eslint 'jsx-a11y/no-static-element-interactions': 0,
 */
 import React from "react";
 import PropTypes from "prop-types";
@@ -8,12 +7,19 @@ import { connect } from "react-redux";
 import BasicModal from "../components/BasicModal";
 import Canvas from "../components/canvas/Canvas";
 import ElementEditPanel from "../components/ElementEditPanel";
+import CustomComponents from "../components/CustomComponents";
 import * as userActions from "../redux/actions/userActions";
 import * as messageActions from "../redux/actions/messageActions";
+import * as templateActions from "../redux/actions/templateActions";
+import * as canvasActions from "../redux/actions/canvasActions";
+import * as customComponentActions from "../redux/actions/customComponentActions";
+import { decryptAppTokens } from "../utils/helperMethods";
 
 import "../../css/profile.scss";
 import "../../css/settings.scss";
 import "../../css/designer.scss";
+
+const classesOutsideArea = [ "components-container", "content" ];
 
 class Designer extends React.Component {
     constructor() {
@@ -21,39 +27,43 @@ class Designer extends React.Component {
         this.state = {
             visibleModal: true,
             visibleModalContainer: true,
-            canvasElements: [],
+            templateName: "",
             currentDragElement: null,
             isEditPanelVisible: false,
-            editableElement: null,
-            availableComponents: [
-                {
-                    id: "firstElement",
-                    text: "drag me bitchhh",
-                    type: "header",
-                    styles: {
-                        backgroundColor: "#00ff0078",
-                        border: "2px solid magenta",
-                    },
-                    width: "60%",
-                    height: "50px",
-                },
-            ],
         };
 
-        this.closeModal = this.closeModal.bind( this );
+        this.createTemplate = this.createTemplate.bind( this );
         this.handleBackClick = this.handleBackClick.bind( this );
         this.onDragStart = this.onDragStart.bind( this );
         this.onDragStop = this.onDragStop.bind( this );
         this.onDrop = this.onDrop.bind( this );
+        this.handleCanvasItemSelection = this.handleCanvasItemSelection.bind( this );
         this.showElementEditPanel = this.showElementEditPanel.bind( this );
         this.deleteElementFromCanvas = this.deleteElementFromCanvas.bind( this );
         this.onEditPanelToggle = this.onEditPanelToggle.bind( this );
+        this.showPagePreview = this.showPagePreview.bind( this );
+        this.goToPublishPage = this.goToPublishPage.bind( this );
+        this.saveComponentChanges = this.saveComponentChanges.bind( this );
+        this.deselectFromCanvas = this.deselectFromCanvas.bind( this );
+        this.saveFontChoice = this.saveFontChoice.bind( this );
     }
 
-    onDragStart( evt, id ) {
-        evt.dataTransfer.setData( "id", id );
+    componentDidMount() {
+        const parentContainer = document.querySelector( ".content" );
+        parentContainer.addEventListener( "click", this.deselectFromCanvas );
+        this.props.clearSelectedItem();
+        this.props.getCustomComponents();
+    }
+
+    componentWillUnmount() {
+        document.querySelector( ".content" )
+            .removeEventListener( "click", this.deselectFromCanvas );
+    }
+
+    onDragStart( evt, data ) {
+        evt.dataTransfer.setData( "data", JSON.stringify( data ) );
         this.setState( {
-            currentDragElement: id,
+            currentDragElement: data,
         } );
     }
 
@@ -66,26 +76,24 @@ class Designer extends React.Component {
             currentDragElement: null,
         } );
     }
-    onDrop( evt, initialCoords ) {
-        const id = evt.dataTransfer.getData( "id" );
-        const { availableComponents } = this.state;
-        const newCanvasItem = availableComponents.find( comp => comp.id === id );
-        if ( !newCanvasItem ) {
-            return;
+
+    onDrop( evt ) {
+        const { _id: templateId } = this.props.template;
+        const targetId = evt.target.id.slice( 1 );
+        const data = JSON.parse( evt.dataTransfer.getData( "data" ) );
+        const {
+            text, childElements, attributes, styles, tag,
+        } = data;
+
+        if ( tag && styles ) {
+            this.props.addComponent( templateId, targetId, {
+                tag, styles, childElements, attributes, text,
+            } );
         }
-        const idOnCanvas = `${ newCanvasItem.type }${ Date.now() }`;
-        this.setState( {
-            canvasElements: [
-                ...this.state.canvasElements, {
-                    ...newCanvasItem,
-                    id: idOnCanvas,
-                    initialCoords: {
-                        ...initialCoords,
-                        width: newCanvasItem.width,
-                        height: newCanvasItem.height,
-                    },
-                } ],
-        } );
+    }
+
+    onEditPanelToggle() {
+        this.setState( { isEditPanelVisible: false } );
     }
 
     handleBackClick() {
@@ -93,37 +101,73 @@ class Designer extends React.Component {
         this.props.history.replace( "/profile" );
     }
 
-    showElementEditPanel( elementData ) {
-        console.log( elementData, this );
+    handleCanvasItemSelection( item ) {
+        if ( this.state.isEditPanelVisible ) {
+            return;
+        }
+        this.props.selectItem( item );
+    }
+
+    showElementEditPanel( ) {
         this.setState( {
             isEditPanelVisible: true,
-            editableElement: elementData,
         } );
     }
 
-    onEditPanelToggle( evt ) {
-        const { value } = evt.target;
-        this.setState( { isEditPanelVisible: false } );
-    }
-    deleteElementFromCanvas( id ) {
-        const canvasObjects = this.state.canvasElements.slice();
-        const itemIndex = canvasObjects.findIndex( item => item.id === id );
-        if ( id !== -1 ) {
-            canvasObjects.splice( itemIndex, 1 );
-            this.setState( { canvasElements: canvasObjects } );
-        }
+    showPagePreview() {
+        const { getTemplateData, template } = this.props;
+        getTemplateData( template._id )
+            .then( () => { this.props.history.replace( "/preview" ); } );
     }
 
-    closeModal() {
+    saveFontChoice( font ) {
+        this.props.saveFontChoice( font );
+    }
+
+    deselectFromCanvas( evt ) {
+        const { className } = evt.target;
+        if ( !classesOutsideArea.includes( className ) ) {
+            return;
+        }
+        this.props.clearSelectedItem();
+    }
+
+    goToPublishPage() {
+        const { getTemplateData, template } = this.props;
+        getTemplateData( template._id )
+            .then( () => { this.props.history.replace( "/publish" ); } );
+    }
+
+    deleteElementFromCanvas( data ) {
+        this.props.deleteComponent( data._id, data.relatedTemplate );
+    }
+
+    createTemplate( name ) {
         this.setState( { visibleModal: false } );
         setTimeout( () => this.setState( { visibleModalContainer: false } ), 400 );
+        const userData = decryptAppTokens();
+        this.props.initializeTemplate( userData, { name } );
+    }
+
+    saveComponentChanges( compId, templateId, changes ) {
+        this.props.editComponent( compId, templateId, changes )
+            .then( () => {
+                this.setState( {
+                    isEditPanelVisible: false,
+                } );
+            } );
     }
 
     render() {
         const { displayName, avatar } = this.props.user;
+        const { templateName } = this.state;
         const {
-            visibleModal, visibleModalContainer, availableComponents, currentDragElement,
-            canvasElements, isEditPanelVisible, editableElement,
+            templateCreationModal, template, selectedItem, customComponents,
+        } = this.props;
+
+        const {
+            visibleModal, visibleModalContainer, currentDragElement,
+            isEditPanelVisible,
         } = this.state;
         const modalStyle = visibleModal ?
             "designer-welcome-box" : "designer-welcome-box slide-out";
@@ -132,18 +176,31 @@ class Designer extends React.Component {
 
         return (
             <div className="designer-page">
-                <BasicModal
+                { templateCreationModal && <BasicModal
                     title={ displayName ? `Hey there, ${ displayName }!` : "Hey there!" }
                     subtitle="This is the designer page, where the magic happens."
-                    closeHandler={ this.closeModal }
+                    closeHandler={ this.createTemplate }
                     modalContainerStyle={ modalContainerStyle }
                     modalContentStyle={ modalStyle }
                 />
+                }
 
                 <header className="profile-header settings-header">
                     <button className="back-button" onClick={ this.handleBackClick }>
             Back to profile
                     </button>
+                    <div className="template-name">
+                        <input
+                            name="siteName"
+                            type="text"
+                            className="modal-input"
+                            onChange={ ( evt ) => {
+                                this.setState( { templateName: evt.target.value } );
+                            } }
+                            value={ templateName || template.name }
+                        />
+                        <label htmlFor="siteName" className="name-label">your template name</label>
+                    </div>
                     <div className="header-user-info">
                         <img
                             src={ avatar }
@@ -151,8 +208,16 @@ class Designer extends React.Component {
                             className="user-icon"
                             style={ { marginRight: "13px" } }
                         />
-                        <button className="simple-button" onClick={ () => {} }>Preview</button>
-                        <button className="confirm-button" onClick={ () => {} }>Publish</button>
+                        <button
+                            className="simple-button"
+                            onClick={ this.showPagePreview }
+                        >Preview
+                        </button>
+                        <button
+                            className="confirm-button"
+                            onClick={ this.goToPublishPage }
+                        >Publish
+                        </button>
                     </div>
                 </header>
                 <div className="content">
@@ -160,33 +225,23 @@ class Designer extends React.Component {
                         <ElementEditPanel
                             toggleHandler={ this.onEditPanelToggle }
                             visible={ isEditPanelVisible }
-                            data={ editableElement || undefined }
+                            data={ selectedItem || undefined }
+                            saveEditHandler={ this.saveComponentChanges }
+                            addFontToDefaults={ this.saveFontChoice }
                         />
-                        <div
-                            className={ currentDragElement
-                                ? "component dragging" : "component" }
-                            draggable
-                            id={ availableComponents[ 0 ].id }
-                            onDragStart={ ( e ) => { this.onDragStart( e, "firstElement" ); } }
-                            onDragEnd={ this.onDragStop }
-                            style={ {
-                                backgroundColor: "pink",
-                                border: "2px solid magenta",
-                                borderRadius: "5px",
-                                width: "60%",
-                                height: "50px",
-                            } }
-                        >
-                            {availableComponents[ 0 ].text}
-                        </div>
+                        <CustomComponents
+                            components={ customComponents }
+                            dragStartHandler={ this.onDragStart }
+                            dragEndHandler={ this.onDragStop }
+                        />
                     </aside>
 
                     <Canvas
-                        elements={ canvasElements }
                         className={ currentDragElement ? "canvas dragging" : "canvas" }
                         handleElementDrop={ this.onDrop }
                         handleElementEdit={ this.showElementEditPanel }
                         handleElementDelete={ this.deleteElementFromCanvas }
+                        itemSelectionHandler={ this.handleCanvasItemSelection }
                     />
                 </div>
             </div>
@@ -198,16 +253,51 @@ Designer.propTypes = {
     user: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
     hideMessage: PropTypes.func.isRequired,
+    template: PropTypes.object,
+    initializeTemplate: PropTypes.func.isRequired,
+    templateCreationModal: PropTypes.bool.isRequired,
+    selectItem: PropTypes.func.isRequired,
+    selectedItem: PropTypes.object,
+    clearSelectedItem: PropTypes.func.isRequired,
+    editComponent: PropTypes.func.isRequired,
+    deleteComponent: PropTypes.func.isRequired,
+    customComponents: PropTypes.array.isRequired,
+    getCustomComponents: PropTypes.func.isRequired,
+    addComponent: PropTypes.func.isRequired,
+    saveFontChoice: PropTypes.func.isRequired,
+    getTemplateData: PropTypes.func.isRequired,
+};
+
+Designer.defaultProps = {
+    template: null,
+    selectedItem: null,
 };
 
 const mapStateToProps = ( state ) => ( {
     user: state.user.userData,
+    template: state.templates.currentTemplate,
+    templateCreationModal: state.messages.templateCreationModal,
+    selectedItem: state.canvas.selectedItem,
+    customComponents: state.customComponents,
 } );
 
 const mapDispatchToProps = ( dispatch ) => ( {
     getUserProfile: userData => dispatch( userActions.getUserProfile( userData ) ),
     hideMessage: () => dispatch( messageActions.hideMessage() ),
-
+    initializeTemplate: ( userData, templateData ) =>
+        dispatch( templateActions.initializeTemplate( userData, templateData ) ),
+    selectItem: ( itemData ) => dispatch( canvasActions.selectItem( itemData ) ),
+    clearSelectedItem: () => dispatch( canvasActions.clearSelectedItem() ),
+    editComponent: ( compId, templateId, changes ) => dispatch( canvasActions
+        .editComponent( compId, templateId, changes ) ),
+    deleteComponent: ( compId, templateId ) => dispatch( canvasActions
+        .deleteComponent( compId, templateId ) ),
+    getCustomComponents: () => dispatch( customComponentActions.getCustomComponents() ),
+    addComponent: ( templateId, parentId, data ) => dispatch( canvasActions
+        .addComponent( templateId, parentId, data ) ),
+    saveFontChoice: ( font ) => dispatch( templateActions.saveFontChoice( font ) ),
+    getTemplateData: ( templateId ) =>
+        dispatch( templateActions.getTemplateData( templateId ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( Designer );

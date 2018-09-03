@@ -61,8 +61,24 @@ function apiGet( url, header = {} ) {
         } );
 }
 
+function apiDelete( url, header = {} ) {
+    const reqHeaders = Object.assign( {}, headers, header );
+
+    return fetch( url, {
+        method: "DELETE",
+        headers: reqHeaders,
+    } )
+        .then( response => {
+            if ( response.status === 200 ) {
+                return response.json();
+            }
+            throw new Error( `${ response.status }: ${ response.statusText }` );
+        } );
+}
+
 export {
     apiGet,
     apiPost,
     apiPut,
+    apiDelete,
 };

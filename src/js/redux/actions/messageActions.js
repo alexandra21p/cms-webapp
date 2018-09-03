@@ -11,3 +11,11 @@ export function showUserActionSuccess() {
 export function showUserActionError( message ) {
     return { type: types.SHOW_USER_ACTION_ERROR, message };
 }
+
+export function showSuccessfulTemplateDeletion() {
+    return { type: types.SHOW_SUCCESSFUL_TEMPLATE_DELETION };
+}
+
+export function showTemplateCreationModal() {
+    return { type: types.SHOW_TEMPLATE_CREATION_MODAL };
+}

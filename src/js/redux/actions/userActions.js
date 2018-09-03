@@ -1,5 +1,7 @@
 import * as types from "./actionTypes";
 import * as messageActions from "./messageActions";
+import * as templateActions from "./templateActions";
+
 import { apiGet, apiPost, apiPut } from "../../utils/Api";
 import { encryptToken, getError } from "../../utils/helperMethods";
 import { errors } from "../../utils/errors";
@@ -10,6 +12,10 @@ export function loadLoggedUserSuccess( user ) {
 
 export function invalidateUser() {
     return { type: types.INVALIDATE_USER };
+}
+
+export function logUserSuccess() {
+    return { type: types.LOG_USER_SUCCESS };
 }
 
 export function getUserProfile( userData ) {
@@ -28,8 +34,13 @@ export function getUserProfile( userData ) {
         )
             .then( ( { payload } ) => {
                 dispatch( loadLoggedUserSuccess( payload ) );
+                console.log( payload );
+                const { createdSites } = payload;
+                if ( createdSites ) {
+                    dispatch( templateActions.loadTemplatesSuccess( createdSites ) );
+                }
             } )
-            .catch( () => {
+            .catch( ( err ) => {
                 dispatch( invalidateUser() );
                 dispatch( messageActions.showUserActionError() );
             } );
@@ -57,7 +68,7 @@ export function loginUserLocal( loginData ) {
                     JSON.stringify( { id, email, provider: "local" } ),
                 );
 
-                dispatch( loadLoggedUserSuccess( user ) );
+                dispatch( logUserSuccess() );
                 return Promise.resolve();
             } )
             .catch( ( error ) => {
@@ -121,10 +132,12 @@ export function loginUserSocial( { provider, accessToken } ) {
                 } ),
             );
 
-            dispatch( loadLoggedUserSuccess( user ) );
+            // dispatch( loadLoggedUserSuccess( user ) );
+            dispatch( logUserSuccess() );
             return Promise.resolve();
         } )
         .catch( ( error ) => {
+            console.log( "social error wehn logging...", error );
             const message = getError( error.message, errors );
             dispatch( messageActions.showUserActionError( message ) );
             dispatch( invalidateUser() );

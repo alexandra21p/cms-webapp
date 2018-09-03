@@ -10,6 +10,7 @@ import "../css/custom.scss";
 import "../css/responsive.scss";
 
 const appContainer = document.querySelector( ".app" );
+
 const initialState = {
     user: {
         isAuthenticated: false,
@@ -21,7 +22,20 @@ const initialState = {
             message: "",
         },
         showSuccessMessage: false,
+        templateCreationModal: false,
     },
+    templates: {
+        allTemplates: [],
+        currentTemplate: {
+            name: "",
+            rootComponent: {},
+        },
+        fonts: [],
+    },
+    canvas: {
+        selectedItem: null,
+    },
+    customComponents: [],
 };
 
 const store = configureStore( initialState );

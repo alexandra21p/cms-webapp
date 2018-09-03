@@ -9,6 +9,7 @@ export default function errorReducer( state = {}, action ) {
                     message: "",
                 },
                 showSuccessMessage: false,
+                templateCreationModal: false,
             } );
         }
         case types.SHOW_USER_ACTION_ERROR: {
@@ -17,6 +18,7 @@ export default function errorReducer( state = {}, action ) {
                     status: true,
                     message: action.message === undefined ? "" : action.message,
                 },
+                templateCreationModal: false,
             } );
         }
         case types.HIDE_MESSAGE: {
@@ -26,6 +28,7 @@ export default function errorReducer( state = {}, action ) {
                     message: "",
                 },
                 showSuccessMessage: false,
+                templateCreationModal: false,
             } );
         }
         case types.SHOW_USER_ACTION_SUCCESS: {
@@ -35,6 +38,27 @@ export default function errorReducer( state = {}, action ) {
                     message: "",
                 },
                 showSuccessMessage: true,
+                templateCreationModal: false,
+            } );
+        }
+        case types.SHOW_SUCCESSFUL_TEMPLATE_DELETION: {
+            return Object.assign( {}, state, {
+                error: {
+                    status: false,
+                    message: "",
+                },
+                showSuccessMessage: true,
+                templateCreationModal: false,
+            } );
+        }
+        case types.SHOW_TEMPLATE_CREATION_MODAL: {
+            return Object.assign( {}, state, {
+                error: {
+                    status: false,
+                    message: "",
+                },
+                showSuccessMessage: true,
+                templateCreationModal: true,
             } );
         }
         default:

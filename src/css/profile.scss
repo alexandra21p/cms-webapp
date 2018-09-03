@@ -137,7 +137,8 @@ aside.sidebar {
 main.profile-main-container {
     flex: 4;
     display: flex;
-    justify-content: space-around;
+    margin-left: 40%;
+    transition: margin-left .3s linear;
 }
 
 .empty-container {
@@ -146,6 +147,122 @@ main.profile-main-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.websites-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  padding: 50px 50px 30px 0;
+  align-items: flex-start;
+}
+
+.website-wrapper {
+    margin: 0 50px;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid pink;
+    opacity: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    -webkit-transition-property: color;
+    transition-property: color;
+    -webkit-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    background: $primary-color;
+    outline-offset: 8px;
+    outline: 1px dashed rgba(249, 174, 164, 0.25);
+    color: $secondary-color-darker;
+    position: relative;
+    cursor: pointer;
+    flex: 1 1 180px;
+}
+
+.new-site-wrapper {
+  margin: 0 50px;
+  height: 100px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  flex: 1 1 180px;
+}
+
+.new-site-wrapper > a.profile-navigation-button {
+  margin: 0;
+}
+
+.website-wrapper:hover {
+  color: white;
+}
+
+.website-wrapper:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $secondary-color-darker;
+    -webkit-transform: scaleY(0);
+    transform: scaleY(0);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    -webkit-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+}
+
+.website-wrapper:hover:before {
+  -webkit-transform: scaleY(1);
+  transform: scaleY(1);
+  -webkit-transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+  transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+}
+
+.website-wrapper > h4 {
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    font-weight: 500;
+    text-transform: uppercase;
+    transition: text-transform .5s linear;
+}
+
+.website-wrapper:hover > h4 {
+  text-transform: lowercase;
+}
+
+.delete-site-button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #226654;
+  top: -15px;
+  right: -15px;
+  border: none;
+  outline: none;
+  opacity: 0;
+  transition: opacity .1s linear .2s;
+  background: url(../assets/delete.png) 6px 50%/65% #226654 no-repeat;
+}
+
+.website-wrapper:hover .delete-site-button {
+  opacity: 1;
+}
+
+.website-container > .profile-navigation-button {
+  margin: 0;
+  height: 38px;
 }
 
 .no-websites-message {
